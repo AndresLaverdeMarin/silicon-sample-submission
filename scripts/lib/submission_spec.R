@@ -32,6 +32,33 @@ sst <- local({
 
   conditions <- c("control", interventions)
 
+  ## Raw survey code name -> canonical condition title. The raw survey files
+  ## (survey.qsf / survey.json) key conditions by these internal code names;
+  ## four are semicolon-joined multi-pair names — the semicolons are part of
+  ## the name, never split them. survey/condition_codenames.csv mirrors this
+  ## map for human readers; this vector is the canonical version.
+  codenames <- c(
+    "control neckties" = "control",
+    "control baseball" = "control",
+    "control dances"   = "control",
+    "practical planarian"   = "Extreme weather predictions",
+    "complicated cockroach" = "Portrait Prof. Cherry",
+    "flimsy fish"           = "Interview Prof. Maraun",
+    "honored haddock"       = "Peer-review",
+    "jealous jaguar"        = "Consensus",
+    "phony parrotfish"      = "Funding",
+    "crushing chicken; gross grasshopper; homely halibut" = "High public trust",
+    "worse wildfowl"        = "Oil industry misinformation",
+    "periwinkle partridge"  = "Scientist community helpers",
+    "difficult dog"         = "Social justice",
+    "giant gibbon; brick bobcat"          = "Corporate reliance",
+    "limping llama; friendly frog"        = "Former skeptics",
+    "perfect prawn"                       = "Measurement & modeling (1)",
+    "orchid orangutan; defiant dragonfly" = "Measurement & modeling (2)",
+    "apple aardvark"        = "Model accuracy",
+    "heartfelt hummingbird" = "Interview Prof. Sebille"
+  )
+
   trust_items <- c(
     paste0("trust_competence_",  1:3),
     paste0("trust_integrity_",   1:3),
@@ -94,6 +121,7 @@ sst <- local({
   list(
     interventions   = interventions,
     conditions      = conditions,
+    codenames       = codenames,
     trust_items     = trust_items,
     outcomes        = outcomes,
     scale_0_100     = scale_0_100,

@@ -2,6 +2,10 @@
 
 # Silicon Sample Benchmark — submission template
 
+> ## ⏰ Prediction lock: **August 30, 2026** (hard deadline)
+>
+> Deposit your predictions on Zenodo and email the DOI + fingerprints by this date. No revisions after.
+
 This repository **is** a submission to the [Silicon Sample Benchmark](https://janpfander.github.io/llm_predictions_megastudy/):
 a multi-team benchmark of AI approaches for predicting the results of a behavioral megastudy on
 trust in climate scientists, *before* the human data are revealed.
@@ -26,10 +30,16 @@ your own.
 > The benchmark ships the survey, codebook, validator, and intervention texts — but **no
 > participant / profile pool**. You construct your own synthetic respondents; there is no pool
 > to wait for. The `profile_id` column is simply a unique id you assign to each respondent.
-> The `make` commands (`clean`, `manifest`, `check`) are **optional conveniences** — they help you
-> build and self-validate those files, but you may produce them however you like (e.g. your own
+> **Any language is fine.** The helper scripts happen to be in R, but nothing about a submission
+> requires R — build your predictions and the submission file(s) in Python, Julia, or whatever you
+> like. The `make` commands (`clean`, `manifest`, `check`) are **optional conveniences** — they help
+> you build and self-validate those files, but you may produce them however you like (e.g. your own
 > cleaning script driven by `codebook.csv`). We can’t guarantee that malformed submissions will be
 > scored, so running `make check` first is strongly recommended — but it is not required.
+> The one thing you **do** owe us regardless of tooling is a **SHA-256 fingerprint** of each
+> prediction file, recorded in `metadata.json` and emailed at deposit (see *Deposit*): `make manifest`
+> computes it for you, but if you skip the helpers you must generate it yourself (e.g.
+> `shasum -a 256 <file>`).
 
 ## What counts as a submission
 
@@ -41,11 +51,19 @@ describes that one entry.
   entries. Label the entry you want scored as your headline result `primary`; label alternatives
   `secondary-1`, `secondary-2`, … The organizers don’t assign this — you do.
 - **One tier per entry.** A repo is Tier 1 *or* 2 *or* 3; `metadata.json`’s `tier` and the prediction
-  file name(s) must agree. To predict at two tiers, that’s two entries.
-- **Submitting several entries** (a different method, model set, or tier): clone this template **once
-  per entry**, fill each in independently, deposit each to Zenodo, and email **all** the deposit DOIs
-  and file fingerprints together. Each entry being its own repo, entries may differ freely in tier and
-  disclosure class.
+  file name(s) must agree. **Tier 1 is preferred:** individual-level data is scored on *every*
+  analysis, so a Tier-1 entry already yields the Tier-2 and Tier-3 metrics — you do **not** submit the
+  same method again at a lower tier to get them.
+- **Submitting several entries** is for a **genuinely different approach** (a different method or model
+  set — e.g. a simulation vs. a direct forecast), not for restacking one method across tiers. Clone
+  this template **once per entry**, fill each in independently, deposit each to Zenodo, and email
+  **all** the deposit DOIs and file fingerprints together. Each entry being its own repo, entries may
+  differ freely in tier and disclosure class. **Cap: at most two entries per tier per team** (so up to
+  six in total). Exactly one of your entries per tier is `primary`; the cross-team field statistics
+  use each team’s primary entries, while every entry appears on the leaderboard.
+- **No required sample size.** You choose your own; pool size never enters scoring. For reference,
+  each submission is scored against *one half* of the human sample (≈500 per intervention, ≈1,000
+  in control).
 
 ## Quickstart
 
@@ -66,6 +84,14 @@ repo to Zenodo before the lock. The steps below walk one entry through that; the
     out or rely on any outcome data from this study (including pilots). You’ll attest to this in
     `registration.md`. Everything else about how you get there is yours to design.
 
+    > **Budgeting compute (Tier 1).** A whole-session respondent sees one stimulus text (roughly
+    > 300–900 words) plus ~90 items — on the order of 5–15k input tokens and 1–3k output tokens per
+    > respondent, depending on how many calls you split the session into (per-item calls multiply the
+    > input cost, since context is re-sent each call). A 3,400-respondent run (200 per intervention)
+    > is then very roughly 20–50M input tokens; providers’ batch APIs typically halve the price.
+    > These are planning numbers, not requirements — pool size never enters scoring. The registration
+    > form asks you to report call counts, total tokens, and cost.
+
 4.  **Turn your output into the submission file(s):**
 
     - **Tier 1 (individual-level).** Your simulation yields raw per-respondent answers in the survey’s
@@ -85,24 +111,35 @@ repo to Zenodo before the lock. The steps below walk one entry through that; the
 
 7.  **Check it.** Run **`make check`** and fix anything it flags until it passes.
 
-8.  **Deposit (GitHub release → Zenodo).** Connect the repo to Zenodo once (Zenodo → log in with
+8.  **Generate your Zenodo metadata.** Fill the deposit fields in `metadata.json` — `creators`
+    (name, affiliation, ORCID), and optionally `abstract` (a custom description; left blank, one is
+    generated for you) and `license` — then run **`make zenodo_citation`**. It writes `.zenodo.json`,
+    which controls the title, description, authors, license, and keywords of your **permanent** Zenodo
+    record; without it, Zenodo auto-generates a poor record (empty description, no affiliation or
+    license) for a DOI you cannot undo. `.zenodo.json` is fully derived from `metadata.json` — don’t
+    hand-edit it; edit `metadata.json` and re-run (it always overwrites to match), then commit the
+    `.zenodo.json` so it ships in your release. ⚠️ Leave `orcid` empty unless it is a **real** ORCID —
+    a malformed one makes Zenodo reject the deposit with an opaque HTTP 500.
+
+9.  **Deposit (GitHub release → Zenodo).** Connect the repo to Zenodo once (Zenodo → log in with
     GitHub → flip your repository **on**), then publish a **GitHub release**. Zenodo automatically
-    archives that release and mints a **DOI** for it — see Zenodo’s guide,
+    archives that release and gives it a **DOI** — see Zenodo’s guide,
     [Archiving a GitHub release](https://help.zenodo.org/docs/github/archive-software/github-upload/).
     That released snapshot — your predictions, `metadata.json`, and `registration.md` together — **is**
     your registration. Do it **before the prediction lock (August 30, 2026)** and email the DOI + your
-    file fingerprints (already recorded in `metadata.json`) to the core team. Submitting several
-    entries? Each is its own repo / release / DOI — send all the DOIs together.
+    file fingerprints (already recorded in `metadata.json`) to the core team at
+    **<janlukas.pfaender@gmail.com>**. Submitting several entries? Each is its own
+    repo / release / DOI — send all the DOIs together.
 
     > The DOI is created *by* the release, so it can’t already be inside the released files — that’s
-    > fine, you email it (step 9 records it back, optionally).
+    > fine, you email it (step 10 records it back, optionally).
 
-9.  **Record your DOI in the repo (optional).** After the release, copy your Zenodo **DOI** (the
+10. **Record your DOI in the repo (optional).** After the release, copy your Zenodo **DOI** (the
     permanent **concept DOI**, “Cite all versions”, is the stable one) into the `zenodo_doi` field of
     `metadata.json` and commit/push it — no new release needed; this just records the DOI in your
     repository for reference. (The snapshot Zenodo already archived won’t include this later edit,
     which is fine — that DOI identifies the snapshot regardless.) Not required for scoring — emailing
-    the DOI in step 8 is enough.
+    the DOI in step 9 is enough.
 
 ## What you edit vs. what ships
 
@@ -111,8 +148,8 @@ repo to Zenodo before the lock. The steps below walk one entry through that; the
 | `metadata.json` | **edit** — machine-readable submission metadata; include `code_repository` (and optional `code_doi`) linking the code that generated your predictions |
 | `registration.md` | **edit** — GUIDE-LLM-extended reporting checklist |
 | `predictions/` | **edit** — your prediction file(s); ships with one `example_*` per tier (delete them before depositing) |
-| `raw_data_deposit/` | **edit (Tier 1 only)** — drop your raw Qualtrics export here, then `make clean`; ships with `example_raw_export.csv` (delete it before depositing) |
-| `survey/` | reference — `survey.qsf` (Qualtrics import) and `survey.json` (same instrument, readable without Qualtrics) are the full instrument; `questionnaire.txt` is a plain-text rendering |
+| `raw_data_deposit/` | **edit (Tier 1 only)** — drop your raw Qualtrics export here, then `make clean`; ships with `example_raw_export.csv` (delete it before depositing). Your own raw export **stays in the released deposit** — it is your simulation’s raw output and part of the transparency record. Tiers 2–3 leave this folder empty. |
+| `survey/` | reference — `survey.qsf` (Qualtrics import) and `survey.json` (same instrument, readable without Qualtrics) are the full instrument; `questionnaire.txt` is a plain-text rendering; `condition_codenames.csv` maps the raw animal-pair condition code names (used in `survey.qsf`/`survey.json`) to the condition titles you predict |
 | `codebook.csv` | reference — every variable: Qualtrics label → target label, wording, and response options |
 | `scripts/` | the engine you run — `check.R`, `clean.R`, `manifest.R`, and `lib/` internals; do not edit |
 
@@ -121,13 +158,17 @@ repo to Zenodo before the lock. The steps below walk one entry through that; the
 These are **optional helpers**, not a required pipeline. They exist so you can produce and
 self-validate your files quickly; if you’d rather generate your prediction file(s) your own way from
 `codebook.csv`, that’s completely fine — just make sure the result matches the format the benchmark
-expects (`make check` is the easiest way to confirm, but not mandatory).
+expects (`make check` is the easiest way to confirm, but not mandatory). The one deliverable that is
+**not** optional is the SHA-256 **fingerprint** of each prediction file (recorded in `metadata.json`
+and emailed at deposit): `make manifest` is simply the convenient way to compute it — skip the helpers
+and you must produce the fingerprint yourself.
 
 | Command | What it does |
 |----|----|
-| `make check` | Verifies the required files exist; validates `metadata.json`, the file name, the SHA-256 fingerprint, the per-tier data structure, coverage, and value ranges. Prints **PASS / PASS-WITH-WARNINGS / FAIL**. |
+| `make check` | Verifies the required files exist; validates `metadata.json`, the file name, the SHA-256 fingerprint, the per-tier data structure, value ranges, and `.zenodo.json`. **Coverage is enforced** — incomplete or duplicated cells fail; a set `team_id` whose predictions aren’t generated yet is reported as *staged*, not broken. Prints **PASS / PASS-WITH-WARNINGS / FAIL**. |
 | `make clean` | Tier-1 only: cleans the raw export in `raw_data_deposit/` into `predictions/`, then runs `make manifest`. |
 | `make manifest` | Fingerprints every `predictions/<team_id>_*.csv` and records the names + SHA-256 in `metadata.json`. Run it after writing or changing a prediction file (Tier 2 / 3, or after deleting examples). |
+| `make zenodo_citation` | (Re)generates `.zenodo.json` from `metadata.json` so your Zenodo deposit gets a well-formed permanent record (title, description, creators, license, keywords, benchmark link). `.zenodo.json` is fully derived — edit `metadata.json` and re-run; it always overwrites to match. |
 
 > A **SHA-256 fingerprint** is a 64-character code derived from a file’s exact contents. It’s the
 > tamper-proof seal on your locked predictions: change one number and the code changes, so the
@@ -163,10 +204,16 @@ the study’s exact recodes and composites so you don’t have to.
 Using it is optional. If you prefer to build the analysis-ready file yourself, that’s fine — but it
 must reproduce those constructed variables exactly as `codebook.csv` documents them (e.g.
 `funding_perceptions = 100 − funding_5`; `age_band` cut at 18–29 / 30–44 / 45–59 / 60+). `make check`
-will tell you whether the result is well-formed.
+will tell you whether the result is well-formed. Note that **scoring reads the composite columns as
+submitted** — it does not recompute them from the items — so a hand-built composite that deviates
+from its definition is scored on the deviant values (`make check` warns when the primary outcome and
+its trust items disagree).
 
 1.  **Export your simulated responses** as a CSV using the Qualtrics variable names and value codes
-    documented in `codebook.csv` (the `qualtrics_label` column). A genuine Qualtrics export — with its
+    documented in `codebook.csv` — its `qualtrics_label` → `target_label` columns are the complete
+    raw→clean field map (e.g. `trust_competent_1` → `trust_competence_1`, `funding_5` →
+    `funding_perceptions`, `individual_*` → `behavior_*`, `donation` → `donation_ams`), so you can
+    drive your export off it instead of transcribing names by hand. A genuine Qualtrics export — with its
     two extra header rows and system columns — works as-is; so does a plain one-header CSV. This repo
     holds **one** Tier-1 entry, so there is one raw export.
 2.  **Drop that file into `raw_data_deposit/`.** Leave exactly one CSV in the folder (delete the shipped
@@ -188,7 +235,10 @@ To clean a file kept elsewhere, pass it explicitly: `make clean INPUT=path/to/ra
     <team_id>_T2_<primary|secondary-k>_v<n>_cells_moderator.csv
 
 `team_id`, `tier`, and `entry` must match `metadata.json`. `v<n>` is your version counter (start at
-`v1`); `make clean` writes `v1`.
+`v1`). It exists only for *your* bookkeeping **before** the deposit: if you regenerate predictions
+after fingerprinting, bump to `v2` so stale files can’t be confused with current ones, and keep only
+the latest version in `predictions/` (`make manifest` fingerprints whatever is there). The version
+you deposit is final — after the lock there are no `v(n+1)`s.
 
 **Coverage.** The study has **17 conditions** = control + **16 interventions**, scored on **13
 outcomes**. In `metadata.json`, `coverage.interventions` counts the 16 interventions (not control)
@@ -196,7 +246,33 @@ and `coverage.outcomes` the 13 outcomes — that’s the `{ "interventions": 16,
 see. Your data must still include the **control** condition: Tier-1 rows and Tier-2 cells cover all
 17 conditions, while Tier-3 reports the 16 interventions’ effects *relative to* control (no control
 row). The exact per-tier column schema and labels are enforced by `make check` (see the `example_*`
-files in `predictions/` and `scripts/lib/submission_spec.R`).
+files in `predictions/` and `scripts/lib/submission_spec.R`). If you deliberately cover a subset,
+declare the counts in `metadata.json` **and list exactly which interventions and outcomes** in
+`registration.md` item 0.5 — the counts drive the completeness check, the list is what the scoring
+report uses.
+
+**Completeness is enforced.** `make check` requires every declared cell to be present **exactly
+once**: a Tier-2 main file covers all condition × outcome cells, the Tier-2 moderator file all
+condition × (moderator level) × outcome cells across the six moderators, and a Tier-3 file all 16 × 13
+intervention × outcome ATEs. Missing cells or duplicates **fail** the check — a deliberately declared
+subset still passes as long as the file matches the `coverage` you declare in `metadata.json`.
+
+**Tier-2 cell scales.** Each cell `mean` is the group average on the outcome’s **native** scale: most
+outcomes are 0–100, `donation_ams` is 0–10 dollars, and **`newsletter_signup` is a 0–1 proportion**
+(the share who subscribed) — not the individual 0/1 of Tier 1. `make check` range-checks these per
+outcome. (Tier-3 `ate` is an unbounded difference and is not range-checked.)
+
+**Tier-2/3 uncertainty intervals (`pi_lower`, `pi_upper`).** These are **95% uncertainty intervals
+on the reported quantity itself** — the cell mean (Tier 2) or the ATE (Tier 3): the interval you
+believe has a 95% chance of containing the value the human study will find. They are **not** the
+spread of individual responses — an interval describing where individual 0–100 answers fall would be
+roughly an order of magnitude too wide and would ruin your inferential scores. Worked example: you
+predict the ATE of one intervention on trust to be +2 points and consider anything between 0 and +4
+plausible → `ate = 2, pi_lower = 0, pi_upper = 4`. The intervals are scored: **coverage** (how often
+the human value falls inside; honest intervals land near 95%) and an **interval score** that rewards
+intervals which are both honest and narrow — so neither padding them wide nor squeezing them tight
+pays. The width also implies a standard error (width / 3.92) used in the inferential-agreement
+analyses. Roughly symmetric, normal-shaped uncertainty is assumed.
 
 ## The survey
 
@@ -227,8 +303,19 @@ intervention stimulus texts.
 Tier-1 runs export raw Qualtrics column names; `make clean` maps them to the analysis schema
 documented in `codebook.csv`.
 
+## Licensing of the shipped survey materials
+
+Your Zenodo license (default `CC-BY-4.0` in `metadata.json`) applies to **your** contribution —
+your code, predictions, and documentation. The shipped `survey/` folder is different: several
+intervention stimulus texts adapt previously published journalism and other copyrighted material,
+included here for scholarly research use. Keep `survey/` in your deposit unchanged (it documents
+what your respondents saw), but your license grant does not — and cannot — re-license those
+underlying texts.
+
 ## More
 
-Tiers, scoring, disclosure classes, and the full timeline are described in the
+Common questions — interval semantics, the multi-pair condition code names, attention checks,
+what feedback you get and when — are answered in [`FAQ.md`](FAQ.md). Tiers, scoring, disclosure
+classes, and the full timeline are described in the
 [call for participation](https://janpfander.github.io/llm_predictions_megastudy/). Questions:
 see the call’s Contact page.

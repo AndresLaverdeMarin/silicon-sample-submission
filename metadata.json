@@ -2,6 +2,15 @@
   "team_id": "example",
   "team_name": "Example Team (replace me)",
   "contact": "name@institution.edu",
+  "creators": [
+    {
+      "name": "Lastname, Firstname",
+      "affiliation": "Your institution",
+      "orcid": ""
+    }
+  ],
+  "abstract": "",
+  "license": "CC-BY-4.0",
   "tier": 1,
   "entry": "primary",
   "approach_family": "per-respondent simulation, single model",
@@ -16,7 +25,7 @@
   "prediction_files": [
     {
       "file": "predictions/example_T1_primary_v1.csv",
-      "sha256": "d6695e1d8b2947cd58fccf80a27e9bee1e38a78ead6b6d646dbd7cfc4a59c965"
+      "sha256": "0f24e117fcf6803743a12ab43f42bf8b0a7893fb9a706e5303cae3eadb79cc59"
     }
   ],
   "coverage": {

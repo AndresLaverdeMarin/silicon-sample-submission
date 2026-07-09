@@ -66,17 +66,37 @@ if (!exists("sst")) {
   behavior_talk = "individual_talk_1", behavior_donate = "individual_donate_1"
 )
 
-## numeric Qualtrics code -> label, tolerant of values that are already labels
-.recode_demo <- function(x, map) {
+## numeric Qualtrics code -> label, tolerant of values that are already labels.
+## Unrecognized non-missing values are a hard error, not a silent NA: a label
+## that doesn't exactly match the spec (see submission_spec.R) would otherwise
+## drop the respondent from every subgroup analysis without anyone noticing.
+.recode_demo <- function(x, map, what) {
   x   <- trimws(as.character(x))
   lab <- unname(map[x])
-  ifelse(!is.na(lab), lab, ifelse(x %in% unname(map), x, NA_character_))
+  out <- ifelse(!is.na(lab), lab, ifelse(x %in% unname(map), x, NA_character_))
+  bad <- unique(x[is.na(out) & !is.na(x) & nzchar(x)])
+  if (length(bad))
+    stop("clean_submission(): unrecognized ", what, " value(s): ",
+         paste0('"', bad, '"', collapse = ", "),
+         "\nAllowed labels (exact strings): ",
+         paste0('"', unique(unname(map)), '"', collapse = ", "),
+         call. = FALSE)
+  out
 }
 
+## Numeric codes are the values a Qualtrics export carries (party uses Qualtrics
+## RecodeValues, so exported codes are 1=Republican, 2=Democrat, 3=Independent,
+## 4=Other even though the on-screen choice order is Rep/Ind/Dem/Other). The
+## extra label entries are the survey's on-screen wordings where they differ
+## from the canonical submission strings (e.g. hyphenated race labels), so a
+## team that injects the survey's own labels also cleans correctly.
 .gender_map <- c("1" = "Male", "2" = "Female", "3" = "Other")
 .race_map   <- c("1" = "White / Caucasian", "2" = "Black / African American",
                  "3" = "Hispanic / Latino", "4" = "Asian / Asian American",
-                 "5" = "Other")
+                 "5" = "Other",
+                 "Black / African-American" = "Black / African American",
+                 "Latino / Hispanic"        = "Hispanic / Latino",
+                 "Asian / Asian-American"   = "Asian / Asian American")
 .edu_map    <- c("1" = "Less than high school",
                  "2" = "High school diploma / GED",
                  "3" = "Some college or Associate's degree",
@@ -87,7 +107,8 @@ if (!exists("sst")) {
                  "3" = "$56,000 to $99,999", "4" = "$100,000 to $167,999",
                  "5" = "$168,000 or more")
 .party_map  <- c("1" = "Republican", "2" = "Democrat",
-                 "3" = "Independent", "4" = "Other")
+                 "3" = "Independent", "4" = "Other",
+                 "Other (please specify)" = "Other")
 
 ## Birth-year parser, ported verbatim from data/cleaning.qmd
 .extract_birth_year <- function(x) {
@@ -164,14 +185,33 @@ clean_submission <- function(input, output = NULL) {
                 "behavior_meat", "behavior_transport", "behavior_solar",
                 "behavior_fly", "behavior_talk", "behavior_donate")
 
+  ## Map raw survey code names (incl. the four semicolon-joined multi-pair
+  ## names) to canonical titles, so a genuine Qualtrics re-run of the shipped
+  ## survey cleans out of the box. Values that already hold a canonical title
+  ## pass through; anything else is a hard error, not a silent NA.
+  d <- d |>
+    mutate(condition = {
+      x   <- str_squish(as.character(condition))
+      out <- ifelse(x %in% names(sst$codenames), unname(sst$codenames[x]), x)
+      bad <- setdiff(unique(out[!is.na(out) & nzchar(out)]), sst$conditions)
+      if (length(bad))
+        stop("clean_submission(): unrecognized condition value(s): ",
+             paste0('"', bad, '"', collapse = ", "),
+             "\nConditions must be canonical titles or raw survey code names ",
+             "(see survey/condition_codenames.csv — join on the FULL code name; ",
+             "semicolons are part of the name, do not split it).",
+             call. = FALSE)
+      out
+    })
+
   d |>
     mutate(
       age      = 2026 - .extract_birth_year(year_birth),
-      gender   = .recode_demo(gender, .gender_map),
-      race     = .recode_demo(race, .race_map),
-      education = .recode_demo(education, .edu_map),
-      income   = .recode_demo(income, .income_map),
-      party    = .recode_demo(party, .party_map),
+      gender   = .recode_demo(gender, .gender_map, "gender"),
+      race     = .recode_demo(race, .race_map, "race"),
+      education = .recode_demo(education, .edu_map, "education"),
+      income   = .recode_demo(income, .income_map, "income"),
+      party    = .recode_demo(party, .party_map, "party"),
       across(all_of(num_vars), ~ suppressWarnings(as.numeric(.x))),
       donation_ams        = suppressWarnings(as.numeric(donation_ams)),
       funding_perceptions = 100 - suppressWarnings(as.numeric(funding_perceptions)),
@@ -204,6 +244,22 @@ clean_submission <- function(input, output = NULL) {
     ) |>
     select(all_of(sst$tier1_required)) ->
   out
+
+  ## Surface effective sample sizes so silent data loss is visible: a condition
+  ## or moderator that lost rows to NA here would be quietly excluded from the
+  ## corresponding analyses at scoring time.
+  n_cond <- table(out$condition)
+  message("clean_submission(): per-condition N — ",
+          if (min(n_cond) == max(n_cond)) paste0(min(n_cond), " in every condition")
+          else paste0("min ", min(n_cond), " (", names(n_cond)[which.min(n_cond)],
+                      "), max ", max(n_cond), " (", names(n_cond)[which.max(n_cond)], ")"))
+  for (mod in c(names(sst$moderators))) {
+    n_na <- sum(is.na(out[[mod]]))
+    if (n_na > 0)
+      message("clean_submission(): NOTE — ", mod, " is NA for ", n_na, " of ",
+              nrow(out), " rows; these rows drop out of every ", mod,
+              " subgroup analysis")
+  }
 
   if (!is.null(output)) {
     readr::write_csv(out, output)

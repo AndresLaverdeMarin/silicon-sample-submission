@@ -1,10 +1,10 @@
 section,qualtrics_label,target_label,question_text,response_options
-A. Measured items,gender,gender,Gender,Male / Female / Other
+A. Measured items,gender,gender,Gender,"Exact submission levels: Male | Female | Other (raw Qualtrics codes 1 | 2 | 3)"
 A. Measured items,year_birth,year_birth,Year of birth (used to derive age and age_band),Free numeric
-A. Measured items,race,race,Race / ethnicity,White / Black / Hispanic / Asian / Other
-A. Measured items,education,education,Highest level of education completed,6 categories (less than HS … Ph.D.)
-A. Measured items,income,income,Household income,5 brackets (<$30k … ≥$168k)
-A. Measured items,party,party,Partisan identity,Republican / Democrat / Independent / Other
+A. Measured items,race,race,Race / ethnicity,"Exact submission levels: White / Caucasian | Black / African American | Hispanic / Latino | Asian / Asian American | Other (raw Qualtrics codes 1–5; the survey's on-screen labels hyphenate slightly differently — clean.R accepts both, but score files must carry these exact strings)"
+A. Measured items,education,education,Highest level of education completed,"Exact submission levels: Less than high school | High school diploma / GED | Some college or Associate's degree | Bachelor's degree | Master's degree / Professional degree | Doctorate degree / Ph.D. (raw Qualtrics codes 1–6)"
+A. Measured items,income,income,Household income,"Exact submission levels: Less than $30,000 | $30,000 to $55,999 | $56,000 to $99,999 | $100,000 to $167,999 | $168,000 or more (raw Qualtrics codes 1–5)"
+A. Measured items,party,party,Partisan identity,"Exact submission levels: Republican | Democrat | Independent | Other (raw EXPORTED Qualtrics codes: 1=Republican, 2=Democrat, 3=Independent, 4=Other — the on-screen choice order is Rep/Ind/Dem/Other, but Qualtrics recodes on export)"
 A. Measured items,trust_competent_1,trust_competence_1,How incompetent or competent are most climate scientists?,0 = Very incompetent … 100 = Very competent
 A. Measured items,trust_intelligent_1,trust_competence_2,How unintelligent or intelligent are most climate scientists?,0 = Very unintelligent … 100 = Very intelligent
 A. Measured items,trust_qualified_1,trust_competence_3,How unqualified or qualified are most climate scientists?,0 = Very unqualified … 100 = Very qualified
@@ -22,8 +22,8 @@ A. Measured items,distrust_1,distrust_post,How much do you distrust climate scie
 A. Measured items,funding_5,funding_perceptions,"Do you think the federal government is spending too much, too little or about the right amount of money on climate change research? (reverse-coded in cleaning)","0 = far too little, 50 = about right, 100 = far too much"
 A. Measured items,belief_post_1,belief_post,"How accurate do you think this statement is? ""Human activities are causing climate change.""",0 = not at all accurate … 100 = extremely accurate
 A. Measured items,policy_general_1,policy_general,"How much do you oppose or support: ""The U.S. government should do more to reduce global warming""",0 = Strongly oppose … 100 = Strongly support
-A. Measured items,donation,donation_ams,"Of the $10 bonus, how much would you like to donate to the American Meteorological Society (AMS)?",$0 to $10
-A. Measured items,newsletter,newsletter_signup,"Did you subscribe to the ""Talking Climate"" newsletter on the previous page? (recoded 1/0 in cleaning)",Yes / No
+A. Measured items,donation,donation_ams,"Of the $10 bonus, how much would you like to donate to the American Meteorological Society (AMS)?","$0–$10 in whole-dollar choices ($1 increments; integers only). All 0–100 slider items are also integers."
+A. Measured items,newsletter,newsletter_signup,"Did you subscribe to the ""Talking Climate"" newsletter on the previous page? (recoded 1/0 in cleaning)","Raw Qualtrics: 1 = Yes, 2 = No (recoded to 1/0 in cleaning). Refers to an earlier newsletter-offer page; see questionnaire.txt for the cross-page dependency."
 A. Measured items,inst_trust_epa_1,inst_trust_epa,How much do you trust the following institutions? — Environmental Protection Agency (EPA),0 = not at all … 100 = very strongly
 A. Measured items,inst_trust_nasa_1,inst_trust_nasa,How much do you trust the following institutions? — National Aeronautics and Space Administration (NASA),0 = not at all … 100 = very strongly
 A. Measured items,inst_trust_noaa_1,inst_trust_noaa,How much do you trust the following institutions? — National Oceanic and Atmospheric Administration (NOAA),0 = not at all … 100 = very strongly
@@ -49,7 +49,7 @@ A. Measured items,individual_solar_1,behavior_solar,How likely are you to engage
 A. Measured items,individual_fly_1,behavior_fly,How likely are you to engage in the following in the next 12 months? — Go on less personal (non-business) air travel,0 = Not likely at all … 100 = Extremely likely
 A. Measured items,individual_talk_1,behavior_talk,How likely are you to engage in the following in the next 12 months? — Talk to friends and family about the importance of climate change,0 = Not likely at all … 100 = Extremely likely
 A. Measured items,individual_donate_1,behavior_donate,How likely are you to engage in the following in the next 12 months? — Donate to an environmental NGO,0 = Not likely at all … 100 = Extremely likely
-B. Constructed during cleaning,NA,age_band,"Age band, cut from age = 2026 − year_birth",18-29 / 30-44 / 45-59 / 60+
+B. Constructed during cleaning,NA,age_band,"Age band, cut from age = 2026 − year_birth","Exact submission levels: 18-29 | 30-44 | 45-59 | 60+"
 B. Constructed during cleaning,NA,funding_perceptions,Reverse of funding_5: 100 − funding_5 (higher = perceives funding too low / supports more funding),Slider 0–100
 B. Constructed during cleaning,NA,newsletter_signup,"Recode of newsletter: Yes→1, No→0",0 / 1
 B. Constructed during cleaning,NA,trust_competence,Mean of trust_competence_1..3,Slider 0–100
