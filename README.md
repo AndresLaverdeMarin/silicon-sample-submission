@@ -2,7 +2,7 @@
 
 # Silicon Sample Benchmark — submission template
 
-> ## ⏰ Prediction lock: **August 30, 2026** (hard deadline)
+> ## ⏰ Prediction lock: **August 31, 2026** (hard deadline)
 >
 > Deposit your predictions on Zenodo and email the DOI + fingerprints by this date. No revisions after.
 
@@ -132,7 +132,7 @@ repo to Zenodo before the lock. The steps below walk one entry through that; the
     archives that release and gives it a **DOI** — see Zenodo’s guide,
     [Archiving a GitHub release](https://help.zenodo.org/docs/github/archive-software/github-upload/).
     That released snapshot — your predictions, `metadata.json`, and `registration.md` together — **is**
-    your registration. Do it **before the prediction lock (August 30, 2026)** and email the DOI + your
+    your registration. Do it **before the prediction lock (August 31, 2026)** and email the DOI + your
     file fingerprints (already recorded in `metadata.json`) to the core team at
     **<janlukas.pfaender@gmail.com>**. Submitting several entries? Each is its own
     repo / release / DOI — send all the DOIs together.

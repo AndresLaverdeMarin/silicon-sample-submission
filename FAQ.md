@@ -59,7 +59,7 @@ The deposited version is final.
 
 **What feedback do we get, and when?**
 Your deposit is acknowledged when you email the DOI + fingerprints. After the prediction lock
-(August 30, 2026) the sealed human data are opened and every submission is scored; each team receives its own scores when the first
+(August 31, 2026) the sealed human data are opened and every submission is scored; each team receives its own scores when the first
 manuscript draft is shared with all teams for comment (target: September 30, 2026). No scores or
 human results are available to anyone before the lock.
 
