@@ -91,6 +91,14 @@ if (!exists("sst")) {
   ok(isTRUE(m$blinding_attestation), "blinding_attestation == true", "must be true")
   ok(!is.null(m$coverage$interventions) && !is.null(m$coverage$outcomes),
      "coverage declared", "coverage.interventions/outcomes missing")
+  ci <- length(sst$interventions)
+  co <- length(sst$outcomes)
+  ok(isTRUE(suppressWarnings(as.integer(m$coverage$interventions)) == ci) &&
+       isTRUE(suppressWarnings(as.integer(m$coverage$outcomes)) == co),
+     paste0("coverage is full (", ci, " interventions, ", co, " outcomes)"),
+     paste0("declared ", m$coverage$interventions %||% "?", " intervention(s), ",
+            m$coverage$outcomes %||% "?", " outcome(s) — partial coverage is not ",
+            "accepted; every intervention and outcome must be predicted"))
   pf <- m$prediction_files
   if (is.null(pf) || nrow(as.data.frame(pf)) < 1) {
     add("prediction_files listed", "FAIL", "none"); return(res)
@@ -116,12 +124,9 @@ if (!exists("sst")) {
        paste0("expected ", n_expected, " for one entry, got ", nrow(pf),
               " — a repo holds one entry; put extra entries in their own repo"))
 
-  ## Declared coverage drives the completeness checks below. A declared subset is
-  ## allowed (registration 0.5), but the file must match what metadata.json declares.
-  ci <- suppressWarnings(as.integer(m$coverage$interventions %||% length(sst$interventions)))
-  co <- suppressWarnings(as.integer(m$coverage$outcomes      %||% length(sst$outcomes)))
-
   ## ---- per-file: name, hash, structure ----
+  ## Completeness below always runs against the full grid (`ci`/`co` from the
+  ## spec): full coverage is a hard requirement, partial coverage fails above.
   for (i in seq_len(nrow(pf))) {
     f <- pf$file[i]; sha <- pf$sha256[i]; fp <- file.path(dir, f)
     pat <- if (isTRUE(tier == 2))
@@ -267,16 +272,16 @@ check_repo <- function(root = ".") {
                                      paste(rng(d[[o]], 0, 100), "value(s) out of range"))
 }
 
-## Missing prediction values FAIL for the main grids: a cell is either predicted
-## or left out of the declared coverage — an NA that passes the row-count check
-## would silently score as missing. The Tier-2 moderator grid is the one
-## exception (see .check_t2_mod): some approaches genuinely cannot simulate
-## e.g. the "Other" gender/race cells, so NAs there WARN and score pairwise.
+## Missing prediction values FAIL for the main grids: an NA that passes the
+## row-count check would silently score as missing. The Tier-2 moderator grid
+## is the one exception (see .check_t2_mod): some approaches genuinely cannot
+## simulate e.g. the "Other" gender/race cells, so NAs there WARN and score
+## pairwise.
 .no_na_fail <- function(d, f, add, ok, vcols) {
   for (v in intersect(vcols, names(d))) {
     n_na <- sum(is.na(d[[v]]))
     ok(n_na == 0, paste0("no missing ", v, ": ", f),
-       paste0(n_na, " NA value(s) — every cell in the declared coverage needs a prediction"))
+       paste0(n_na, " NA value(s) — every cell needs a prediction"))
   }
 }
 
@@ -317,6 +322,19 @@ check_repo <- function(root = ".") {
         if (min(n_cond) == max(n_cond)) paste0(min(n_cond), " in every condition")
         else paste0("min ", min(n_cond), " (", names(n_cond)[which.min(n_cond)],
                     "), max ", max(n_cond), " (", names(n_cond)[which.max(n_cond)], ")"))
+    ## Precision requirement (benchmark preregistration): a Tier 1 entry needs
+    ## at least the human half's per-cell sizes -- 500 per intervention and
+    ## 1,000 in control -- so its effects are not noisier than the reference
+    ## for reasons unrelated to the method. WARN rather than FAIL so pilot
+    ## files still pass a structural check; the deposited entry must meet it.
+    n_int <- n_cond[setdiff(names(n_cond), "control")]
+    below <- c(names(n_int)[n_int < 500],
+               if ("control" %in% names(n_cond) && n_cond[["control"]] < 1000) "control")
+    warn(length(below) == 0,
+         paste0("precision floor (500/intervention, 1,000 control): ", f),
+         paste0(length(below), " condition(s) below the preregistered minimum: ",
+                paste(head(below, 5), collapse = ", "),
+                if (length(below) > 5) ", ..." else ""))
   }
   if ("profile_id" %in% names(d))
     warn(!any(duplicated(d$profile_id)), paste0("profile_id unique: ", f),
@@ -355,14 +373,6 @@ check_repo <- function(root = ".") {
     ok(length(setdiff(unique(as.character(d$condition)), sst$conditions)) == 0,
        paste0("condition labels valid: ", f),
        paste("unknown:", paste(setdiff(unique(as.character(d$condition)), sst$conditions), collapse = ", ")))
-  if (all(c("pi_lower", "pi_upper") %in% names(d)))
-    ok(all(d$pi_lower <= d$pi_upper, na.rm = TRUE), paste0("pi_lower <= pi_upper: ", f),
-       paste(sum(d$pi_lower > d$pi_upper, na.rm = TRUE), "row(s) inverted"))
-  if (all(c("pi_lower", "mean", "pi_upper") %in% names(d)))
-    warn(all(d$pi_lower <= d$mean & d$mean <= d$pi_upper, na.rm = TRUE),
-         paste0("mean within prediction interval: ", f),
-         paste(sum(!(d$pi_lower <= d$mean & d$mean <= d$pi_upper), na.rm = TRUE),
-               "row(s) with mean outside [pi_lower, pi_upper]"))
 }
 
 ## Per-outcome value ranges for Tier-2 cell means (#19): newsletter_signup is a
@@ -379,11 +389,10 @@ check_repo <- function(root = ".") {
   }
 }
 
-## Cell completeness + de-duplication (#4/#22): every cell of the declared grid
+## Cell completeness + de-duplication (#4/#22): every cell of the full grid
 ## present exactly once. `dims` is a named vector of expected distinct counts per
 ## key column; expected cells = prod(dims). These FAIL (not WARN) so an incomplete
-## or duplicated submission cannot pass clean — coverage is tied to what the team
-## declares in metadata.json, so a declared subset still passes.
+## or duplicated submission cannot pass clean.
 .grid_complete <- function(d, f, keys, dims, add, ok) {
   if (!all(keys %in% names(d))) return(invisible())
   cells <- d[keys]
@@ -396,13 +405,13 @@ check_repo <- function(root = ".") {
      paste0("complete coverage (", exp_cells, " cells): ", f),
      paste0(ncell, " of ", exp_cells, " cells present (",
             paste(sprintf("%s %d/%d", names(dims), got[names(dims)], dims), collapse = ", "),
-            ") — must match declared coverage in metadata.json (add missing cells or fix coverage)"))
+            ") — every intervention and outcome must be predicted (add missing cells)"))
 }
 
 .check_t2_main <- function(d, f, add, ok, warn, rng, ci, co) {
   .check_cells(d, f, add, ok, warn, rng, sst$tier2_main_cols)
   .cell_value_warn(d, f, warn, rng, "mean")
-  .no_na_fail(d, f, add, ok, c("mean", "pi_lower", "pi_upper"))
+  .no_na_fail(d, f, add, ok, "mean")
   .grid_complete(d, f, c("condition", "outcome"),
                  c(condition = ci + 1L, outcome = co), add, ok)
 }
@@ -449,10 +458,7 @@ check_repo <- function(root = ".") {
   if ("outcome" %in% names(d))
     ok(length(setdiff(unique(d$outcome), sst$outcomes)) == 0, paste0("outcome labels valid: ", f),
        paste("unknown:", paste(setdiff(unique(d$outcome), sst$outcomes), collapse = ", ")))
-  if (all(c("pi_lower", "pi_upper") %in% names(d)))
-    ok(all(d$pi_lower <= d$pi_upper, na.rm = TRUE), paste0("pi_lower <= pi_upper: ", f),
-       paste(sum(d$pi_lower > d$pi_upper, na.rm = TRUE), "row(s) inverted"))
-  .no_na_fail(d, f, add, ok, c("ate", "pi_lower", "pi_upper"))
+  .no_na_fail(d, f, add, ok, "ate")
   ## Positive completeness: all intervention x outcome ATEs present exactly once
   ## (replaces the one-sided "row count <= 208" warn that let partial files pass).
   .grid_complete(d, f, c("condition", "outcome"),

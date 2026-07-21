@@ -1,15 +1,13 @@
 # FAQ — Silicon Sample Benchmark submissions
 
-Short answers to the questions teams actually hit. The README stays the canonical walkthrough;
+Short answers to common questions. The README stays the canonical walkthrough;
 where the two overlap, the README wins.
 
-**What exactly are `pi_lower` / `pi_upper` (Tiers 2–3)?**
-A 95% *uncertainty interval on the reported quantity itself* — the cell mean (Tier 2) or the ATE
-(Tier 3): the interval you believe has a 95% chance of containing the value the human study will
-find. It is *not* the spread of individual responses; that reading gives intervals roughly an order
-of magnitude too wide. The intervals are scored (coverage + an interval score that rewards honest,
-narrow intervals), so neither padding nor squeezing them pays. See *Prediction file naming* in the
-README for the worked example.
+**Do Tier-2/3 submissions include uncertainty intervals?**
+No — point predictions only. Earlier drafts asked for `pi_lower` / `pi_upper` columns; they are
+gone. The cross-team scoring dropped the inferential-agreement and equivalence (TOST) metrics,
+which were the only consumers of the intervals, and interval scoring (PI coverage / Winkler) was
+dropped with them.
 
 **The raw survey has code names like `"crushing chicken; gross grasshopper; homely halibut"` — is
 that three conditions?**
@@ -32,18 +30,27 @@ outcome disagrees with its items).
 
 **My approach can't simulate some moderator levels (e.g. "Other" gender). Can I leave those Tier-2
 moderator cells out?**
-Leave the cells in the grid but set `mean`/`pi_lower`/`pi_upper` to `NA` — the completeness check
+Leave the cells in the grid but set `mean` to `NA` — the completeness check
 still passes and those cells simply score as missing (excluded pairwise from the affected subgroup
 comparisons). This applies to the Tier-2 *moderator* file only; the Tier-2 main grid and Tier-3
-file must be fully non-missing within your declared coverage.
+file must be fully non-missing.
 
 **The control condition has three filler texts. Which one do my control respondents see?**
 Mirror the survey: each control respondent is randomly assigned *one* of the three (neckties /
 baseball / dances). All three map to the single condition label `control`.
 
 **How many entries can we submit?**
-At most two per tier per team (up to six total). Mark one entry per tier `primary` — the cross-team
-field statistics use primary entries; every valid entry appears on the leaderboard.
+At most two per tier per team (up to six total). Mark exactly one entry — across all tiers —
+`primary`; the cross-team field statistics use each team's single primary entry, and every valid
+entry appears on the leaderboard.
+
+**Is there a minimum number of synthetic respondents (Tier 1)?**
+Yes — at least **500 per intervention and 1,000 in control**, the size of the human half every
+submission is scored against (the benchmark preregistration's *precision requirement*). Below that
+floor your effect estimates are noisier than the reference for reasons unrelated to your method.
+More is encouraged; beyond precision a bigger pool buys nothing — only point estimates are scored,
+so a larger pool stabilizes them but cannot buy a better score. `make check` warns when a file is
+below the floor.
 
 **What does `v2` in a file name mean, and when do I bump it?**
 Only your own pre-deposit bookkeeping: bump when you regenerate predictions after fingerprinting so
@@ -52,7 +59,7 @@ The deposited version is final.
 
 **What feedback do we get, and when?**
 Your deposit is acknowledged when you email the DOI + fingerprints. After the prediction lock
-(August 30, 2026) the human study completes; each team receives its own scores when the first
+(August 30, 2026) the sealed human data are opened and every submission is scored; each team receives its own scores when the first
 manuscript draft is shared with all teams for comment (target: September 30, 2026). No scores or
 human results are available to anyone before the lock.
 

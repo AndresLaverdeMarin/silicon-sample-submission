@@ -27,7 +27,7 @@ your own.
 
 > The numbers in the example are random placeholders with **no real effects** — for format only.
 
-> **What we actually need from you:** (1) your **prediction file(s)** and (2) a completed
+> **What we need from you:** (1) your **prediction file(s)** and (2) a completed
 > **`registration.md`**, released together (see *Deposit*) — those two are all we read; everything else
 > you keep in the repo is there for transparency and reproducibility.
 > The benchmark ships the survey, codebook, validator, and intervention texts — but **no
@@ -62,11 +62,17 @@ describes that one entry.
   this template **once per entry**, fill each in independently, deposit each to Zenodo, and email
   **all** the deposit DOIs and file fingerprints together. Each entry being its own repo, entries may
   differ freely in tier and disclosure class. **Cap: at most two entries per tier per team** (so up to
-  six in total). Exactly one of your entries per tier is `primary`; the cross-team field statistics
-  use each team's primary entries, while every entry appears on the leaderboard.
-- **No required sample size.** You choose your own; pool size never enters scoring. For reference,
-  each submission is scored against *one half* of the human sample (≈500 per intervention, ≈1,000
-  in control).
+  six in total). Exactly one of your entries — across all tiers — is `primary`; the cross-team
+  field statistics use each team's single primary entry, while every entry appears on the
+  leaderboard.
+- **Minimum sample size (Tier 1): 500 per intervention, 1,000 in control.** That is the size of
+  the human half every submission is scored against (the benchmark preregistration's *precision
+  requirement*) — below it, your effect estimates are noisier than the reference for reasons
+  unrelated to your method. Going well beyond the floor is encouraged: synthetic respondents are
+  cheap, and a larger pool makes your estimates reflect the method rather than a lucky draw. Beyond
+  precision there is no advantage — only point estimates are scored, so a huge pool stabilizes
+  your estimates but cannot buy a better score. `make check` warns
+  when a file is below the floor.
 
 ## Quickstart
 
@@ -90,10 +96,10 @@ repo to Zenodo before the lock. The steps below walk one entry through that; the
    > **Budgeting compute (Tier 1).** A whole-session respondent sees one stimulus text (roughly
    > 300–900 words) plus ~90 items — on the order of 5–15k input tokens and 1–3k output tokens per
    > respondent, depending on how many calls you split the session into (per-item calls multiply the
-   > input cost, since context is re-sent each call). A 3,400-respondent run (200 per intervention)
-   > is then very roughly 20–50M input tokens; providers' batch APIs typically halve the price.
-   > These are planning numbers, not requirements — pool size never enters scoring. The registration
-   > form asks you to report call counts, total tokens, and cost.
+   > input cost, since context is re-sent each call). A minimum-size run (500 per intervention +
+   > 1,000 in control = 9,000 respondents) is then very roughly 50–130M input tokens; providers'
+   > batch APIs typically halve the price. These are planning numbers — the registration form asks
+   > you to report call counts, total tokens, and cost.
 
 4. **Turn your output into the submission file(s):**
    - **Tier 1 (individual-level).** Your simulation yields raw per-respondent answers in the survey's
@@ -248,33 +254,25 @@ and `coverage.outcomes` the 13 outcomes — that's the `{ "interventions": 16, "
 see. Your data must still include the **control** condition: Tier-1 rows and Tier-2 cells cover all
 17 conditions, while Tier-3 reports the 16 interventions' effects *relative to* control (no control
 row). The exact per-tier column schema and labels are enforced by `make check` (see the `example_*`
-files in `predictions/` and `scripts/lib/submission_spec.R`). If you deliberately cover a subset,
-declare the counts in `metadata.json` **and list exactly which interventions and outcomes** in
-`registration.md` item 0.5 — the counts drive the completeness check, the list is what the scoring
-report uses.
+files in `predictions/` and `scripts/lib/submission_spec.R`). **Full coverage is required** —
+partial coverage is not accepted; every intervention and outcome must be predicted, and `make check`
+fails a `metadata.json` that declares anything less than `{ "interventions": 16, "outcomes": 13 }`.
 
-**Completeness is enforced.** `make check` requires every declared cell to be present **exactly
-once**: a Tier-2 main file covers all condition × outcome cells, the Tier-2 moderator file all
-condition × (moderator level) × outcome cells across the six moderators, and a Tier-3 file all 16 × 13
-intervention × outcome ATEs. Missing cells or duplicates **fail** the check — a deliberately declared
-subset still passes as long as the file matches the `coverage` you declare in `metadata.json`.
+**Completeness is enforced.** `make check` requires every cell of the full grid to be present
+**exactly once**: a Tier-2 main file covers all condition × outcome cells, the Tier-2 moderator file
+all condition × (moderator level) × outcome cells across the six moderators, and a Tier-3 file all
+16 × 13 intervention × outcome ATEs. Missing cells or duplicates **fail** the check.
 
 **Tier-2 cell scales.** Each cell `mean` is the group average on the outcome's **native** scale: most
 outcomes are 0–100, `donation_ams` is 0–10 dollars, and **`newsletter_signup` is a 0–1 proportion**
 (the share who subscribed) — not the individual 0/1 of Tier 1. `make check` range-checks these per
 outcome. (Tier-3 `ate` is an unbounded difference and is not range-checked.)
 
-**Tier-2/3 uncertainty intervals (`pi_lower`, `pi_upper`).** These are **95% uncertainty intervals
-on the reported quantity itself** — the cell mean (Tier 2) or the ATE (Tier 3): the interval you
-believe has a 95% chance of containing the value the human study will find. They are **not** the
-spread of individual responses — an interval describing where individual 0–100 answers fall would be
-roughly an order of magnitude too wide and would ruin your inferential scores. Worked example: you
-predict the ATE of one intervention on trust to be +2 points and consider anything between 0 and +4
-plausible → `ate = 2, pi_lower = 0, pi_upper = 4`. The intervals are scored: **coverage** (how often
-the human value falls inside; honest intervals land near 95%) and an **interval score** that rewards
-intervals which are both honest and narrow — so neither padding them wide nor squeezing them tight
-pays. The width also implies a standard error (width / 3.92) used in the inferential-agreement
-analyses. Roughly symmetric, normal-shaped uncertainty is assumed.
+**Tiers 2–3 are point predictions only.** A Tier-2 main file has the columns `condition, outcome,
+mean`, the Tier-2 moderator file `condition, moderator, moderator_level, outcome, mean`, and a
+Tier-3 file `condition, outcome, ate`. No uncertainty intervals are submitted: the cross-team
+scoring dropped the inferential-agreement and equivalence (TOST) metrics, which were the only
+consumers of the intervals, and interval scoring (PI coverage / Winkler) was dropped with them.
 
 ## The survey
 
@@ -285,7 +283,7 @@ format and intended use:
 |---|---|---|
 | **What it is** | Qualtrics' proprietary survey-export file | Qualtrics' documented Survey-Definitions API output |
 | **Format** | JSON, but an undocumented proprietary structure | JSON with a documented schema (`result.Questions`, `result.Blocks`, `result.SurveyFlow`, …) |
-| **Best for** | re-importing into Qualtrics to **run** the survey yourself | **reading / parsing** the instrument programmatically — e.g. individual participant simulations that need the items, response scales, block/flow order, branching and randomization a respondent actually saw |
+| **Best for** | re-importing into Qualtrics to **run** the survey yourself | **reading / parsing** the instrument programmatically — e.g. individual participant simulations that need the items, response scales, block/flow order, branching and randomization a respondent saw |
 | **Qualtrics license** | required (to import and run) | not required (it is plain JSON anyone can read) |
 
 In short: use `survey.qsf` if you want to *run* the survey in Qualtrics; use `survey.json`
@@ -293,8 +291,9 @@ if you want to *read* it without a Qualtrics account.
 
 > **Scope note.** These files are the reduced *LLM-simulation* instrument: respondents are routed
 > through the non-interactive conditions only (assigned by a block randomizer); the interactive chatbot
-> arms have been removed. The conditions and outcomes you are scored on are defined in `codebook.csv`
-> and `scripts/lib/submission_spec.R`; treat those as authoritative for scope, and the two survey files as
+> arms have been removed. The condition labels you are scored on are defined in
+> `survey/condition_codenames.csv`, the outcomes in `codebook.csv`, and both in
+> `scripts/lib/submission_spec.R`; treat those as authoritative for scope, and the two survey files as
 > the faithful record of the instrument.
 
 A human-readable rendering is also provided as `survey/questionnaire.txt`, laid out in
@@ -316,7 +315,7 @@ underlying texts.
 
 ## More
 
-Common questions — interval semantics, the multi-pair condition code names, attention checks,
+Common questions — the multi-pair condition code names, attention checks,
 what feedback you get and when — are answered in [`FAQ.md`](FAQ.md). Tiers, scoring, disclosure
 classes, and the full timeline are described in the
 [call for participation](https://janpfander.github.io/llm_predictions_megastudy/). Questions:

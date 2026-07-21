@@ -4,8 +4,9 @@ Fill in every item before the prediction lock; this file ships inside your repo'
 (see the README's *Deposit* step). This form covers **one entry** (one repo / one Zenodo release,
 `primary` or `secondary-k` — see the README's *What counts as a submission*); if you submit several
 entries, fill one form per entry. Items marked **★**
-must be disclosed **fully publicly** (never escrowed or withheld). Items not applicable to your
-approach: write `N/A`. When several models serve different pipeline stages, complete the model
+must be disclosed **fully publicly** (never escrowed or withheld). Items marked **†** must be at
+minimum escrowed — they may be sealed from the public, but never withheld from the core team. Items
+not applicable to your approach: write `N/A`. When several models serve different pipeline stages, complete the model
 sections (B) once per model. See the call's *Disclosure policy* for escrow rules.
 
 ---
@@ -15,7 +16,7 @@ sections (B) once per model. See the call's *Disclosure policy* for escrow rules
 - **0.2 Plain-language summary ★** — one paragraph, what the approach does (not how):
 - **0.3 Submission tier & approach family ★** — tier (1/2/3); family (e.g. per-respondent simulation / agent / direct forecast; single model / ensemble / multi-agent; zero-shot / literature-conditioned):
 - **0.4 Pipeline diagram** — ordered steps from raw inputs to submitted file:
-- **0.5 Coverage ★** — number of respondents/cells/estimates; mapping to conditions; coverage of the 16 interventions and 13 outcomes. If a declared subset: **list exactly which interventions and outcomes** (names, not counts) + justification:
+- **0.5 Coverage ★** — number of respondents/cells/estimates; mapping to conditions. Full coverage is required: every submission predicts **all 16 interventions and all 13 outcomes** (partial coverage is not accepted). Confirm here:
 
 ## A · Scope of LLM use
 - **A.1 Purpose** — every workflow stage where LLMs are used:
@@ -60,16 +61,16 @@ sections (B) once per model. See the call's *Disclosure policy* for escrow rules
 
 ## I · Data inputs, blinding, and competing interests
 - **I.1 Competing interests ★** — funding, in-kind compute/model access, relationships with LLM-interested entities:
-- **I.2 External human data** — all external human datasets that informed the approach anywhere (training/fine-tuning/retrieval/ICL/calibration):
+- **I.2 External human data †** — all external human datasets that informed the approach anywhere (training/fine-tuning/retrieval/ICL/calibration):
 - **I.3 Blinding attestation ★** — **mandatory.** Signed attestation that no team member accessed, solicited, or was shown any human outcome data from this study, including pilots, before the prediction lock:
-- **I.4 Contamination note** — training cutoff of every model vs public release dates of this project's materials; note any known exposure:
+- **I.4 Contamination note †** — training cutoff of every model vs public release dates of this project's materials; note any known exposure:
 
 ## J · Internal selection procedure
-- **J.1 Design-space search** — how the final pipeline was chosen: how many configurations tried, internal validation criterion, what data it ran against:
+- **J.1 Design-space search †** — how the final pipeline was chosen: how many configurations tried, internal validation criterion, what data it ran against:
 
 ## K · Reproducibility & frozen artifacts
 - **K.1 Code & materials** — link/DOI, secrets removed, determinism/seeds documented (also record the link in `metadata.json` → `code_repository` / `code_doi`):
-- **K.2 Raw output logs** — complete unprocessed model responses archived, hashed, time-stamped (required for Tiers 1–2, public or escrowed; Tier 3 where intermediate generations exist; oversized logs may be a separate linked Zenodo upload):
+- **K.2 Raw output logs †** — complete unprocessed model responses archived, hashed, time-stamped (required for Tiers 1–2, public or escrowed; Tier 3 where intermediate generations exist; oversized logs may be a separate linked Zenodo upload):
 - **K.3 Computational resources** — API-call counts, total tokens, cost, compute time:
 
 ## L · Disclosure class
