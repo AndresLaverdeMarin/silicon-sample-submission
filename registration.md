@@ -12,7 +12,7 @@ sections (B) once per model. See the call's *Disclosure policy* for escrow rules
 ---
 
 ## 0 · Approach identity and output
-- **0.1 Team ★** — name, the one or two members (teams are at most two), affiliations, corresponding contact:
+- **0.1 Team ★** — name, the one or two members (teams are at most two, unless a larger team was approved on request), affiliations, corresponding contact:
 - **0.2 Plain-language summary ★** — one paragraph, what the approach does (not how):
 - **0.3 Submission tier & approach family ★** — tier (1/2/3); family (e.g. per-respondent simulation / agent / direct forecast; single model / ensemble / multi-agent; zero-shot / literature-conditioned):
 - **0.4 Pipeline diagram** — ordered steps from raw inputs to submitted file:
