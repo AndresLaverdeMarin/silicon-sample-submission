@@ -61,8 +61,8 @@ describes that one entry.
   set — e.g. a simulation vs. a direct forecast), not for restacking one method across tiers. Clone
   this template **once per entry**, fill each in independently, deposit each to Zenodo, and email
   **all** the deposit DOIs and file fingerprints together. Each entry being its own repo, entries may
-  differ freely in tier and disclosure class. **Cap: at most two entries per tier per team** (so up to
-  six in total). Exactly one of your entries — across all tiers — is `primary`; the cross-team
+  differ freely in tier and disclosure class. **Cap: at most three entries per tier per team** (so up to
+  nine in total). Exactly one of your entries — across all tiers — is `primary`; the cross-team
   field statistics use each team's single primary entry, while every entry appears on the
   leaderboard.
 - **Minimum sample size (Tier 1): 500 per intervention, 1,000 in control.** That is the size of

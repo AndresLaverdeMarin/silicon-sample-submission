@@ -40,7 +40,7 @@ Mirror the survey: each control respondent is randomly assigned *one* of the thr
 baseball / dances). All three map to the single condition label `control`.
 
 **How many entries can we submit?**
-At most two per tier per team (up to six total). Mark exactly one entry — across all tiers —
+At most three per tier per team (up to nine total). Mark exactly one entry — across all tiers —
 `primary`; the cross-team field statistics use each team's single primary entry, and every valid
 entry appears on the leaderboard.
 
