@@ -29,20 +29,27 @@ codebook; if you build the file yourself, keep them consistent (`make check` war
 outcome disagrees with its items).
 
 **My approach can't simulate some moderator levels (e.g. "Other" gender). Can I leave those Tier-2
-moderator cells out?**
-Leave the cells in the grid but set `mean` to `NA` — the completeness check
-still passes and those cells simply score as missing (excluded pairwise from the affected subgroup
-comparisons). This applies to the Tier-2 *moderator* file only; the Tier-2 main grid and Tier-3
-file must be fully non-missing.
+moderator cells out, or set them to `NA`?**
+No — every file must be complete, the moderator file included, and `make check` fails on `NA` cells.
+But no cell is out of reach: your main file already predicts a mean for every condition × outcome,
+and repeating that condition mean in a group's moderator cells is a real, honest prediction — it says
+"this intervention works the same for this group as for everyone" (no moderation). It is scored
+accordingly. Predicting only the subgroups you feel confident about would let teams pick their own
+test set, which is why missing cells are not accepted anywhere.
 
 **The control condition has three filler texts. Which one do my control respondents see?**
 Mirror the survey: each control respondent is randomly assigned *one* of the three (neckties /
 baseball / dances). All three map to the single condition label `control`.
 
 **How many entries can we submit?**
-At most three per tier per team (up to nine total). Mark exactly one entry — across all tiers —
-`primary`; the cross-team field statistics use each team's single primary entry, and every valid
-entry appears on the leaderboard.
+At most three per tier per team (up to nine total). Every entry enters all main analyses (the
+cross-team field statistics and the leaderboard); the per-tier cap limits how much any single team
+can shape the field distribution. If there are good reasons to systematically vary some aspect of
+an approach, we may grant more entries on request, but only three per tier enter the main analyses.
+Mark exactly one entry — across all tiers — `primary`: a robustness analysis reruns the main
+results on primary entries only, one per team. In figures and the leaderboard, entries appear under
+neutral submission labels, with an appendix table mapping each label to its team. The most useful
+extra entries vary one factor and hold the rest fixed.
 
 **Is there a minimum number of synthetic respondents (Tier 1)?**
 Yes — at least **500 per intervention and 1,000 in control**, the size of the human half every

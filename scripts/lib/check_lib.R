@@ -272,11 +272,12 @@ check_repo <- function(root = ".") {
                                      paste(rng(d[[o]], 0, 100), "value(s) out of range"))
 }
 
-## Missing prediction values FAIL for the main grids: an NA that passes the
-## row-count check would silently score as missing. The Tier-2 moderator grid
-## is the one exception (see .check_t2_mod): some approaches genuinely cannot
-## simulate e.g. the "Other" gender/race cells, so NAs there WARN and score
-## pairwise.
+## Missing prediction values FAIL for every prediction grid, the Tier-2
+## moderator grid included: an NA that passes the row-count check would
+## silently score as missing, and pairwise exclusion would score different
+## teams on different, self-chosen cell sets. There is no cell a team cannot
+## fill — to predict "no moderation for this group", repeat the condition
+## mean from the main file in that group's cells (see FAQ.md).
 .no_na_fail <- function(d, f, add, ok, vcols) {
   for (v in intersect(vcols, names(d))) {
     n_na <- sum(is.na(d[[v]]))
@@ -419,13 +420,11 @@ check_repo <- function(root = ".") {
 .check_t2_mod <- function(d, f, add, ok, warn, rng, ci, co) {
   .check_cells(d, f, add, ok, warn, rng, sst$tier2_mod_cols)
   .cell_value_warn(d, f, warn, rng, "mean")
-  ## NA cells are allowed here (some approaches cannot simulate every
-  ## moderator level, e.g. "Other" gender/race); they score as missing and the
-  ## affected subgroup comparisons run pairwise on what is present.
-  n_na <- sum(is.na(d$mean %||% numeric(0)))
-  if (n_na > 0)
-    add(paste0("moderator cells with NA mean: ", f), "WARN",
-        paste0(n_na, " cell(s) NA — these score as missing (excluded pairwise)"))
+  ## NA cells FAIL here too (policy change 2026-08: previously WARN + pairwise
+  ## scoring). To predict "no moderation for this group", repeat the condition
+  ## mean from the main file in that group's cells — an always-available,
+  ## honest prediction that the intervention works the same for that group.
+  .no_na_fail(d, f, add, ok, "mean")
   if ("moderator" %in% names(d))
     ok(length(setdiff(unique(d$moderator), names(sst$moderators))) == 0,
        paste0("moderator labels valid: ", f),

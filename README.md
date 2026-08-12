@@ -48,20 +48,27 @@ complete set of predictions at a single tier; this repo holds exactly one, and i
 describes that one entry.
 
 - **`primary` vs `secondary-k`** (the `entry` field in `metadata.json`) is *your own* ranking of your
-  entries. Label the entry you want scored as your headline result `primary`; label alternatives
-  `secondary-1`, `secondary-2`, … The organizers don’t assign this — you do.
+  entries. Label the entry you consider your team’s single best effort `primary`; label alternatives
+  `secondary-1`, `secondary-2`, … The organizers don’t assign this — you do. Every entry is scored
+  in the main analyses; the primary designation feeds the primaries-only robustness analysis.
 - **One tier per entry.** A repo is Tier 1 *or* 2 *or* 3; `metadata.json`’s `tier` and the prediction
   file name(s) must agree. **Tier 1 is preferred:** individual-level data is scored on *every*
   analysis, so a Tier-1 entry already yields the Tier-2 and Tier-3 metrics — you do **not** submit the
   same method again at a lower tier to get them.
-- **Submitting several entries** is for a **genuinely different approach** (a different method or model
-  set — e.g. a simulation vs. a direct forecast), not for restacking one method across tiers. Clone
-  this template **once per entry**, fill each in independently, deposit each to Zenodo, and email
-  **all** the deposit DOIs and file fingerprints together. Each entry being its own repo, entries may
-  differ freely in tier and disclosure class. **Cap: at most three entries per tier per team** (so up to
-  nine in total). Exactly one of your entries — across all tiers — is `primary`; the cross-team
-  field statistics use each team’s single primary entry, while every entry appears on the
-  leaderboard.
+- **Submitting several entries** — **at most three entries per tier per team** (so up to nine in
+  total). An extra entry can be a genuinely different approach (e.g. a simulation vs. a direct
+  forecast) or a structured variation of one approach (e.g. the same model with different amounts of
+  individual-level information). Clone this template **once per entry**, fill each in independently,
+  deposit each to Zenodo, and email **all** the deposit DOIs and file fingerprints together. Each
+  entry being its own repo, entries may differ freely in tier and disclosure class. **Every entry
+  enters all main analyses (the cross-team field statistics and the leaderboard)**; the per-tier cap
+  limits how much any single team can shape the field distribution. If there are good reasons to
+  systematically vary some aspect of an approach, more entries may be granted on request, but only
+  three per tier enter the main analyses. Exactly one of your entries — across all tiers — is
+  `primary`: a robustness analysis reruns the main results on primary entries only, one per team.
+  In figures and the leaderboard, entries appear under neutral submission labels, with an appendix
+  table mapping each label to its team. The most useful extra entries vary one factor and hold the
+  rest fixed.
 - **Minimum sample size (Tier 1): 500 per intervention, 1,000 in control.** That is the size of
   the human half every submission is scored against (the benchmark preregistration’s *precision
   requirement*) — below it, your effect estimates are noisier than the reference for reasons
@@ -257,9 +264,12 @@ partial coverage is not accepted; every intervention and outcome must be predict
 fails a `metadata.json` that declares anything less than `{ "interventions": 16, "outcomes": 13 }`.
 
 **Completeness is enforced.** `make check` requires every cell of the full grid to be present
-**exactly once**: a Tier-2 main file covers all condition × outcome cells, the Tier-2 moderator file
-all condition × (moderator level) × outcome cells across the six moderators, and a Tier-3 file all
-16 × 13 intervention × outcome ATEs. Missing cells or duplicates **fail** the check.
+**exactly once**, with **no `NA` values in any file**: a Tier-2 main file covers all condition ×
+outcome cells, the Tier-2 moderator file all condition × (moderator level) × outcome cells across
+the six moderators, and a Tier-3 file all 16 × 13 intervention × outcome ATEs. Missing cells,
+`NA` values, or duplicates **fail** the check. To predict *no moderation* for a demographic group,
+repeat the condition mean from your main file in that group’s moderator cells — an always-available,
+honest prediction that the intervention works the same for that group (see the FAQ).
 
 **Tier-2 cell scales.** Each cell `mean` is the group average on the outcome’s **native** scale: most
 outcomes are 0–100, `donation_ams` is 0–10 dollars, and **`newsletter_signup` is a 0–1 proportion**
