@@ -1,0 +1,273 @@
+{
+  "built_by": "generation/scripts/02_cell_profiles.py",
+  "source": "population/gss_profiles.csv, quota-matched by population/02_build_personas.py (seed 20260807). The pool is the organizers' own v1 clone pool, not a benchmark resource — see population/README.md and registration item D.1.",
+  "n_personas": 9000,
+  "n_groups": 28,
+  "shares": {
+    "gender": {
+      "Male": 0.48966666666666664,
+      "Female": 0.5043333333333333,
+      "Other": 0.006
+    },
+    "age_band": {
+      "18-29": 0.19966666666666666,
+      "30-44": 0.2577777777777778,
+      "45-59": 0.2311111111111111,
+      "60+": 0.31144444444444447
+    },
+    "race": {
+      "White / Caucasian": 0.5988888888888889,
+      "Black / African American": 0.1228888888888889,
+      "Hispanic / Latino": 0.18366666666666667,
+      "Asian / Asian American": 0.06633333333333333,
+      "Other": 0.02822222222222222
+    },
+    "education": {
+      "Less than high school": 0.09411111111111112,
+      "High school diploma / GED": 0.2911111111111111,
+      "Some college or Associate's degree": 0.2577777777777778,
+      "Bachelor's degree": 0.22866666666666666,
+      "Master's degree / Professional degree": 0.10955555555555556,
+      "Doctorate degree / Ph.D.": 0.01877777777777778
+    },
+    "income": {
+      "Less than $30,000": 0.16622222222222222,
+      "$30,000 to $55,999": 0.1751111111111111,
+      "$56,000 to $99,999": 0.23633333333333334,
+      "$100,000 to $167,999": 0.204,
+      "$168,000 or more": 0.21833333333333332
+    },
+    "party": {
+      "Republican": 0.24433333333333335,
+      "Democrat": 0.3268888888888889,
+      "Independent": 0.3967777777777778,
+      "Other": 0.032
+    }
+  },
+  "groups": {
+    "all": {
+      "key": "all",
+      "moderator": null,
+      "level": null,
+      "n": 9000,
+      "share": 1.0,
+      "summary": "This is the whole sample (n = 9,000 profiles). Gender: 49.0 % Male, 50.4 % Female, 0.6 % Other. Age: median band 45-59, mean 48 years. Race / ethnicity: 59.9 % White / Caucasian, 18.4 % Hispanic / Latino, 12.3 % Black / African American. Education: 35.7 % hold a bachelor's degree or higher. Income: 16.6 % under $30,000, 42.2 % $100,000 or more. Party: 24.4 % Republican, 32.7 % Democrat, 39.7 % Independent, 3.2 % Other. Ideology: 33.2 % conservative, 30.8 % liberal. Prior confidence in the scientific community: 30.5 % a great deal, 5.8 % hardly any. 33.3 % describe themselves as born-again or evangelical Christian."
+    },
+    "gender::Male": {
+      "key": "gender::Male",
+      "moderator": "gender",
+      "level": "Male",
+      "n": 4407,
+      "share": 0.48966666666666664,
+      "summary": "This group is 49.0 % of the sample (n = 4,407 of 9,000 profiles). Age: median band 45-59, mean 47 years. Race / ethnicity: 60.1 % White / Caucasian, 18.7 % Hispanic / Latino, 11.8 % Black / African American. Education: 35.7 % hold a bachelor's degree or higher. Income: 13.4 % under $30,000, 45.7 % $100,000 or more. Party: 26.0 % Republican, 27.4 % Democrat, 42.1 % Independent, 4.5 % Other. Ideology: 36.5 % conservative, 28.6 % liberal. Prior confidence in the scientific community: 33.5 % a great deal, 5.6 % hardly any. 32.9 % describe themselves as born-again or evangelical Christian."
+    },
+    "gender::Female": {
+      "key": "gender::Female",
+      "moderator": "gender",
+      "level": "Female",
+      "n": 4539,
+      "share": 0.5043333333333333,
+      "summary": "This group is 50.4 % of the sample (n = 4,539 of 9,000 profiles). Age: median band 45-59, mean 49 years. Race / ethnicity: 59.9 % White / Caucasian, 17.8 % Hispanic / Latino, 12.7 % Black / African American. Education: 35.6 % hold a bachelor's degree or higher. Income: 19.8 % under $30,000, 38.7 % $100,000 or more. Party: 22.9 % Republican, 37.7 % Democrat, 37.4 % Independent, 2.0 % Other. Ideology: 30.1 % conservative, 32.8 % liberal. Prior confidence in the scientific community: 27.5 % a great deal, 6.0 % hardly any. 33.8 % describe themselves as born-again or evangelical Christian."
+    },
+    "gender::Other": {
+      "key": "gender::Other",
+      "moderator": "gender",
+      "level": "Other",
+      "n": 54,
+      "share": 0.006,
+      "summary": "This group is 0.6 % of the sample (n = 54 of 9,000 profiles). Age: median band 45-59, mean 46 years. Race / ethnicity: 42.6 % White / Caucasian, 33.3 % Hispanic / Latino, 14.8 % Black / African American. Education: 42.6 % hold a bachelor's degree or higher. Income: 14.8 % under $30,000, 59.3 % $100,000 or more. Party: 20.4 % Republican, 44.4 % Democrat, 33.3 % Independent, 1.9 % Other. Ideology: 27.8 % conservative, 42.6 % liberal. Prior confidence in the scientific community: 33.3 % a great deal, 3.7 % hardly any. 33.3 % describe themselves as born-again or evangelical Christian."
+    },
+    "age_band::18-29": {
+      "key": "age_band::18-29",
+      "moderator": "age_band",
+      "level": "18-29",
+      "n": 1797,
+      "share": 0.19966666666666666,
+      "summary": "This group is 20.0 % of the sample (n = 1,797 of 9,000 profiles). Gender: 51.1 % Male, 48.2 % Female, 0.6 % Other. Age: median band 18-29, mean 24 years. Race / ethnicity: 60.4 % White / Caucasian, 19.3 % Hispanic / Latino, 12.1 % Black / African American. Education: 25.2 % hold a bachelor's degree or higher. Income: 23.9 % under $30,000, 31.3 % $100,000 or more. Party: 18.9 % Republican, 29.0 % Democrat, 46.5 % Independent, 5.6 % Other. Ideology: 24.4 % conservative, 40.2 % liberal. Prior confidence in the scientific community: 34.7 % a great deal, 4.5 % hardly any. 25.4 % describe themselves as born-again or evangelical Christian."
+    },
+    "age_band::30-44": {
+      "key": "age_band::30-44",
+      "moderator": "age_band",
+      "level": "30-44",
+      "n": 2320,
+      "share": 0.2577777777777778,
+      "summary": "This group is 25.8 % of the sample (n = 2,320 of 9,000 profiles). Gender: 50.4 % Male, 49.0 % Female, 0.6 % Other. Age: median band 30-44, mean 37 years. Race / ethnicity: 60.0 % White / Caucasian, 18.1 % Hispanic / Latino, 12.5 % Black / African American. Education: 41.5 % hold a bachelor's degree or higher. Income: 14.3 % under $30,000, 43.8 % $100,000 or more. Party: 20.1 % Republican, 31.1 % Democrat, 44.9 % Independent, 3.9 % Other. Ideology: 30.0 % conservative, 32.0 % liberal. Prior confidence in the scientific community: 29.1 % a great deal, 7.3 % hardly any. 31.6 % describe themselves as born-again or evangelical Christian."
+    },
+    "age_band::45-59": {
+      "key": "age_band::45-59",
+      "moderator": "age_band",
+      "level": "45-59",
+      "n": 2080,
+      "share": 0.2311111111111111,
+      "summary": "This group is 23.1 % of the sample (n = 2,080 of 9,000 profiles). Gender: 50.0 % Male, 49.4 % Female, 0.6 % Other. Age: median band 45-59, mean 52 years. Race / ethnicity: 59.1 % White / Caucasian, 18.3 % Hispanic / Latino, 12.3 % Black / African American. Education: 39.2 % hold a bachelor's degree or higher. Income: 10.2 % under $30,000, 54.6 % $100,000 or more. Party: 29.8 % Republican, 29.5 % Democrat, 38.5 % Independent, 2.2 % Other. Ideology: 39.1 % conservative, 25.0 % liberal. Prior confidence in the scientific community: 28.5 % a great deal, 6.0 % hardly any. 38.2 % describe themselves as born-again or evangelical Christian."
+    },
+    "age_band::60+": {
+      "key": "age_band::60+",
+      "moderator": "age_band",
+      "level": "60+",
+      "n": 2803,
+      "share": 0.31144444444444447,
+      "summary": "This group is 31.1 % of the sample (n = 2,803 of 9,000 profiles). Gender: 45.6 % Male, 53.8 % Female, 0.6 % Other. Age: median band 60+, mean 69 years. Race / ethnicity: 60.1 % White / Caucasian, 18.0 % Hispanic / Latino, 12.2 % Black / African American. Education: 35.1 % hold a bachelor's degree or higher. Income: 18.6 % under $30,000, 38.7 % $100,000 or more. Party: 27.6 % Republican, 38.7 % Democrat, 31.9 % Independent, 1.9 % Other. Ideology: 37.2 % conservative, 28.1 % liberal. Prior confidence in the scientific community: 30.4 % a great deal, 5.3 % hardly any. 36.4 % describe themselves as born-again or evangelical Christian."
+    },
+    "race::White / Caucasian": {
+      "key": "race::White / Caucasian",
+      "moderator": "race",
+      "level": "White / Caucasian",
+      "n": 5390,
+      "share": 0.5988888888888889,
+      "summary": "This group is 59.9 % of the sample (n = 5,390 of 9,000 profiles). Gender: 49.1 % Male, 50.5 % Female, 0.4 % Other. Age: median band 45-59, mean 48 years. Education: 40.1 % hold a bachelor's degree or higher. Income: 12.8 % under $30,000, 47.4 % $100,000 or more. Party: 32.4 % Republican, 27.6 % Democrat, 35.9 % Independent, 4.2 % Other. Ideology: 38.7 % conservative, 30.5 % liberal. Prior confidence in the scientific community: 32.2 % a great deal, 5.5 % hardly any. 29.9 % describe themselves as born-again or evangelical Christian."
+    },
+    "race::Black / African American": {
+      "key": "race::Black / African American",
+      "moderator": "race",
+      "level": "Black / African American",
+      "n": 1106,
+      "share": 0.1228888888888889,
+      "summary": "This group is 12.3 % of the sample (n = 1,106 of 9,000 profiles). Gender: 47.1 % Male, 52.2 % Female, 0.7 % Other. Age: median band 45-59, mean 48 years. Education: 27.9 % hold a bachelor's degree or higher. Income: 26.1 % under $30,000, 29.8 % $100,000 or more. Party: 4.4 % Republican, 57.6 % Democrat, 36.7 % Independent, 1.3 % Other. Ideology: 19.3 % conservative, 30.2 % liberal. Prior confidence in the scientific community: 19.9 % a great deal, 7.0 % hardly any. 55.0 % describe themselves as born-again or evangelical Christian."
+    },
+    "race::Hispanic / Latino": {
+      "key": "race::Hispanic / Latino",
+      "moderator": "race",
+      "level": "Hispanic / Latino",
+      "n": 1653,
+      "share": 0.18366666666666667,
+      "summary": "This group is 18.4 % of the sample (n = 1,653 of 9,000 profiles). Gender: 50.0 % Male, 48.9 % Female, 1.1 % Other. Age: median band 45-59, mean 47 years. Education: 18.5 % hold a bachelor's degree or higher. Income: 22.6 % under $30,000, 29.7 % $100,000 or more. Party: 16.9 % Republican, 30.9 % Democrat, 50.0 % Independent, 2.2 % Other. Ideology: 28.1 % conservative, 29.2 % liberal. Prior confidence in the scientific community: 26.5 % a great deal, 6.5 % hardly any. 34.5 % describe themselves as born-again or evangelical Christian."
+    },
+    "race::Asian / Asian American": {
+      "key": "race::Asian / Asian American",
+      "moderator": "race",
+      "level": "Asian / Asian American",
+      "n": 597,
+      "share": 0.06633333333333333,
+      "summary": "This group is 6.6 % of the sample (n = 597 of 9,000 profiles). Gender: 48.1 % Male, 51.4 % Female, 0.5 % Other. Age: median band 45-59, mean 49 years. Education: 65.0 % hold a bachelor's degree or higher. Income: 11.7 % under $30,000, 60.0 % $100,000 or more. Party: 15.9 % Republican, 40.5 % Democrat, 42.9 % Independent, 0.7 % Other. Ideology: 25.6 % conservative, 38.5 % liberal. Prior confidence in the scientific community: 45.2 % a great deal, 2.5 % hardly any. 19.6 % describe themselves as born-again or evangelical Christian."
+    },
+    "race::Other": {
+      "key": "race::Other",
+      "moderator": "race",
+      "level": "Other",
+      "n": 254,
+      "share": 0.02822222222222222,
+      "summary": "This group is 2.8 % of the sample (n = 254 of 9,000 profiles). Gender: 49.6 % Male, 49.6 % Female, 0.8 % Other. Age: median band 45-59, mean 48 years. Education: 19.3 % hold a bachelor's degree or higher. Income: 28.0 % under $30,000, 26.8 % $100,000 or more. Party: 12.6 % Republican, 26.4 % Democrat, 58.7 % Independent, 2.4 % Other. Ideology: 28.3 % conservative, 33.1 % liberal. Prior confidence in the scientific community: 30.3 % a great deal, 11.0 % hardly any. 36.2 % describe themselves as born-again or evangelical Christian."
+    },
+    "education::Less than high school": {
+      "key": "education::Less than high school",
+      "moderator": "education",
+      "level": "Less than high school",
+      "n": 847,
+      "share": 0.09411111111111112,
+      "summary": "This group is 9.4 % of the sample (n = 847 of 9,000 profiles). Gender: 46.2 % Male, 53.1 % Female, 0.7 % Other. Age: median band 45-59, mean 48 years. Race / ethnicity: 47.3 % Hispanic / Latino, 33.1 % White / Caucasian, 12.6 % Black / African American. Income: 46.4 % under $30,000, 14.0 % $100,000 or more. Party: 16.6 % Republican, 26.4 % Democrat, 54.5 % Independent, 2.4 % Other. Ideology: 34.4 % conservative, 25.1 % liberal. Prior confidence in the scientific community: 25.1 % a great deal, 10.6 % hardly any. 42.0 % describe themselves as born-again or evangelical Christian."
+    },
+    "education::High school diploma / GED": {
+      "key": "education::High school diploma / GED",
+      "moderator": "education",
+      "level": "High school diploma / GED",
+      "n": 2620,
+      "share": 0.2911111111111111,
+      "summary": "This group is 29.1 % of the sample (n = 2,620 of 9,000 profiles). Gender: 51.0 % Male, 48.4 % Female, 0.6 % Other. Age: median band 45-59, mean 47 years. Race / ethnicity: 60.1 % White / Caucasian, 18.2 % Hispanic / Latino, 14.5 % Black / African American. Income: 22.7 % under $30,000, 30.8 % $100,000 or more. Party: 26.4 % Republican, 31.3 % Democrat, 38.5 % Independent, 3.9 % Other. Ideology: 34.4 % conservative, 26.8 % liberal. Prior confidence in the scientific community: 25.1 % a great deal, 6.3 % hardly any. 32.8 % describe themselves as born-again or evangelical Christian."
+    },
+    "education::Some college or Associate's degree": {
+      "key": "education::Some college or Associate's degree",
+      "moderator": "education",
+      "level": "Some college or Associate's degree",
+      "n": 2320,
+      "share": 0.2577777777777778,
+      "summary": "This group is 25.8 % of the sample (n = 2,320 of 9,000 profiles). Gender: 47.8 % Male, 51.8 % Female, 0.4 % Other. Age: median band 45-59, mean 48 years. Race / ethnicity: 59.2 % White / Caucasian, 20.2 % Hispanic / Latino, 13.3 % Black / African American. Income: 15.9 % under $30,000, 32.1 % $100,000 or more. Party: 28.0 % Republican, 26.5 % Democrat, 42.8 % Independent, 2.6 % Other. Ideology: 37.4 % conservative, 23.7 % liberal. Prior confidence in the scientific community: 24.4 % a great deal, 7.3 % hardly any. 37.8 % describe themselves as born-again or evangelical Christian."
+    },
+    "education::Bachelor's degree": {
+      "key": "education::Bachelor's degree",
+      "moderator": "education",
+      "level": "Bachelor's degree",
+      "n": 2058,
+      "share": 0.22866666666666666,
+      "summary": "This group is 22.9 % of the sample (n = 2,058 of 9,000 profiles). Gender: 46.9 % Male, 52.5 % Female, 0.6 % Other. Age: median band 45-59, mean 48 years. Race / ethnicity: 67.5 % White / Caucasian, 11.5 % Asian / Asian American, 9.7 % Black / African American. Income: 4.4 % under $30,000, 62.9 % $100,000 or more. Party: 23.3 % Republican, 36.5 % Democrat, 36.3 % Independent, 3.8 % Other. Ideology: 31.3 % conservative, 35.6 % liberal. Prior confidence in the scientific community: 36.5 % a great deal, 3.3 % hardly any. 30.7 % describe themselves as born-again or evangelical Christian."
+    },
+    "education::Master's degree / Professional degree": {
+      "key": "education::Master's degree / Professional degree",
+      "moderator": "education",
+      "level": "Master's degree / Professional degree",
+      "n": 986,
+      "share": 0.10955555555555556,
+      "summary": "This group is 11.0 % of the sample (n = 986 of 9,000 profiles). Gender: 50.7 % Male, 48.4 % Female, 0.9 % Other. Age: median band 45-59, mean 51 years. Race / ethnicity: 68.1 % White / Caucasian, 11.5 % Asian / Asian American, 9.9 % Black / African American. Income: 3.9 % under $30,000, 71.9 % $100,000 or more. Party: 20.1 % Republican, 46.0 % Democrat, 31.5 % Independent, 2.3 % Other. Ideology: 24.3 % conservative, 48.9 % liberal. Prior confidence in the scientific community: 47.1 % a great deal, 2.5 % hardly any. 24.4 % describe themselves as born-again or evangelical Christian."
+    },
+    "education::Doctorate degree / Ph.D.": {
+      "key": "education::Doctorate degree / Ph.D.",
+      "moderator": "education",
+      "level": "Doctorate degree / Ph.D.",
+      "n": 169,
+      "share": 0.01877777777777778,
+      "summary": "This group is 1.9 % of the sample (n = 169 of 9,000 profiles). Gender: 63.3 % Male, 35.5 % Female, 1.2 % Other. Age: median band 45-59, mean 52 years. Race / ethnicity: 59.2 % White / Caucasian, 23.1 % Asian / Asian American, 8.9 % Hispanic / Latino. Income: 5.9 % under $30,000, 74.6 % $100,000 or more. Party: 22.5 % Republican, 46.2 % Democrat, 29.0 % Independent, 2.4 % Other. Ideology: 26.0 % conservative, 56.2 % liberal. Prior confidence in the scientific community: 53.8 % a great deal, 2.4 % hardly any. 21.3 % describe themselves as born-again or evangelical Christian."
+    },
+    "income::Less than $30,000": {
+      "key": "income::Less than $30,000",
+      "moderator": "income",
+      "level": "Less than $30,000",
+      "n": 1496,
+      "share": 0.16622222222222222,
+      "summary": "This group is 16.6 % of the sample (n = 1,496 of 9,000 profiles). Gender: 39.4 % Male, 60.1 % Female, 0.5 % Other. Age: median band 30-44, mean 47 years. Race / ethnicity: 46.3 % White / Caucasian, 25.0 % Hispanic / Latino, 19.3 % Black / African American. Education: 9.3 % hold a bachelor's degree or higher. Party: 15.3 % Republican, 32.5 % Democrat, 49.3 % Independent, 2.9 % Other. Ideology: 29.5 % conservative, 32.1 % liberal. Prior confidence in the scientific community: 24.3 % a great deal, 7.7 % hardly any. 41.9 % describe themselves as born-again or evangelical Christian."
+    },
+    "income::$30,000 to $55,999": {
+      "key": "income::$30,000 to $55,999",
+      "moderator": "income",
+      "level": "$30,000 to $55,999",
+      "n": 1576,
+      "share": 0.1751111111111111,
+      "summary": "This group is 17.5 % of the sample (n = 1,576 of 9,000 profiles). Gender: 47.7 % Male, 51.8 % Female, 0.4 % Other. Age: median band 45-59, mean 47 years. Race / ethnicity: 51.4 % White / Caucasian, 23.9 % Hispanic / Latino, 16.9 % Black / African American. Education: 18.5 % hold a bachelor's degree or higher. Party: 19.4 % Republican, 32.6 % Democrat, 45.3 % Independent, 2.8 % Other. Ideology: 30.3 % conservative, 26.5 % liberal. Prior confidence in the scientific community: 26.8 % a great deal, 6.9 % hardly any. 36.5 % describe themselves as born-again or evangelical Christian."
+    },
+    "income::$56,000 to $99,999": {
+      "key": "income::$56,000 to $99,999",
+      "moderator": "income",
+      "level": "$56,000 to $99,999",
+      "n": 2127,
+      "share": 0.23633333333333334,
+      "summary": "This group is 23.6 % of the sample (n = 2,127 of 9,000 profiles). Gender: 49.6 % Male, 50.1 % Female, 0.3 % Other. Age: median band 45-59, mean 48 years. Race / ethnicity: 62.7 % White / Caucasian, 19.4 % Hispanic / Latino, 10.4 % Black / African American. Education: 30.7 % hold a bachelor's degree or higher. Party: 26.0 % Republican, 28.1 % Democrat, 42.4 % Independent, 3.5 % Other. Ideology: 34.9 % conservative, 25.4 % liberal. Prior confidence in the scientific community: 25.7 % a great deal, 6.8 % hardly any. 33.6 % describe themselves as born-again or evangelical Christian."
+    },
+    "income::$100,000 to $167,999": {
+      "key": "income::$100,000 to $167,999",
+      "moderator": "income",
+      "level": "$100,000 to $167,999",
+      "n": 1836,
+      "share": 0.204,
+      "summary": "This group is 20.4 % of the sample (n = 1,836 of 9,000 profiles). Gender: 53.5 % Male, 45.5 % Female, 1.0 % Other. Age: median band 45-59, mean 49 years. Race / ethnicity: 60.6 % White / Caucasian, 15.9 % Hispanic / Latino, 12.6 % Black / African American. Education: 45.8 % hold a bachelor's degree or higher. Party: 32.0 % Republican, 35.5 % Democrat, 29.1 % Independent, 3.4 % Other. Ideology: 37.5 % conservative, 29.7 % liberal. Prior confidence in the scientific community: 30.8 % a great deal, 4.4 % hardly any. 32.1 % describe themselves as born-again or evangelical Christian."
+    },
+    "income::$168,000 or more": {
+      "key": "income::$168,000 or more",
+      "moderator": "income",
+      "level": "$168,000 or more",
+      "n": 1965,
+      "share": 0.21833333333333332,
+      "summary": "This group is 21.8 % of the sample (n = 1,965 of 9,000 profiles). Gender: 52.4 % Male, 46.9 % Female, 0.7 % Other. Age: median band 45-59, mean 48 years. Race / ethnicity: 73.4 % White / Caucasian, 10.1 % Hispanic / Latino, 9.8 % Asian / Asian American. Education: 65.6 % hold a bachelor's degree or higher. Party: 26.7 % Republican, 35.3 % Democrat, 34.7 % Independent, 3.3 % Other. Ideology: 32.5 % conservative, 40.2 % liberal. Prior confidence in the scientific community: 43.0 % a great deal, 3.6 % hardly any. 25.2 % describe themselves as born-again or evangelical Christian."
+    },
+    "party::Republican": {
+      "key": "party::Republican",
+      "moderator": "party",
+      "level": "Republican",
+      "n": 2199,
+      "share": 0.24433333333333335,
+      "summary": "This group is 24.4 % of the sample (n = 2,199 of 9,000 profiles). Gender: 52.2 % Male, 47.3 % Female, 0.5 % Other. Age: median band 45-59, mean 51 years. Race / ethnicity: 79.3 % White / Caucasian, 12.7 % Hispanic / Latino, 4.3 % Asian / Asian American. Education: 32.6 % hold a bachelor's degree or higher. Income: 10.4 % under $30,000, 50.6 % $100,000 or more. Ideology: 74.3 % conservative, 5.3 % liberal. Prior confidence in the scientific community: 19.9 % a great deal, 8.0 % hardly any. 47.3 % describe themselves as born-again or evangelical Christian."
+    },
+    "party::Democrat": {
+      "key": "party::Democrat",
+      "moderator": "party",
+      "level": "Democrat",
+      "n": 2942,
+      "share": 0.3268888888888889,
+      "summary": "This group is 32.7 % of the sample (n = 2,942 of 9,000 profiles). Gender: 41.1 % Male, 58.1 % Female, 0.8 % Other. Age: median band 45-59, mean 50 years. Race / ethnicity: 50.5 % White / Caucasian, 21.7 % Black / African American, 17.4 % Hispanic / Latino. Education: 43.6 % hold a bachelor's degree or higher. Income: 16.5 % under $30,000, 45.7 % $100,000 or more. Ideology: 10.7 % conservative, 60.5 % liberal. Prior confidence in the scientific community: 39.9 % a great deal, 3.1 % hardly any. 25.9 % describe themselves as born-again or evangelical Christian."
+    },
+    "party::Independent": {
+      "key": "party::Independent",
+      "moderator": "party",
+      "level": "Independent",
+      "n": 3571,
+      "share": 0.3967777777777778,
+      "summary": "This group is 39.7 % of the sample (n = 3,571 of 9,000 profiles). Gender: 51.9 % Male, 47.5 % Female, 0.5 % Other. Age: median band 30-44, mean 45 years. Race / ethnicity: 54.1 % White / Caucasian, 23.2 % Hispanic / Latino, 11.4 % Black / African American. Education: 31.0 % hold a bachelor's degree or higher. Income: 20.7 % under $30,000, 34.1 % $100,000 or more. Ideology: 25.9 % conservative, 22.3 % liberal. Prior confidence in the scientific community: 29.1 % a great deal, 6.5 % hardly any. 31.3 % describe themselves as born-again or evangelical Christian."
+    },
+    "party::Other": {
+      "key": "party::Other",
+      "moderator": "party",
+      "level": "Other",
+      "n": 288,
+      "share": 0.032,
+      "summary": "This group is 3.2 % of the sample (n = 288 of 9,000 profiles). Gender: 68.4 % Male, 31.2 % Female, 0.3 % Other. Age: median band 30-44, mean 41 years. Race / ethnicity: 79.2 % White / Caucasian, 12.5 % Hispanic / Latino, 4.9 % Black / African American. Education: 36.8 % hold a bachelor's degree or higher. Income: 14.9 % under $30,000, 44.1 % $100,000 or more. Ideology: 39.6 % conservative, 27.8 % liberal. Prior confidence in the scientific community: 31.9 % a great deal, 8.7 % hardly any. 28.8 % describe themselves as born-again or evangelical Christian."
+    }
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "task_id": "F3r1__policy_specific_mean__gender__c01",
+  "draw": "F3r1",
+  "framing": "F3",
+  "repeat": 1,
+  "outcome": "policy_specific_mean",
+  "moderator": "gender",
+  "groups": [
+    "gender::Male",
+    "gender::Female",
+    "gender::Other"
+  ],
+  "items": [
+    "policy_specific_1_1",
+    "policy_specific_2_1",
+    "policy_specific_3_1",
+    "policy_specific_4_1",
+    "policy_specific_5_1",
+    "policy_specific_6_1",
+    "policy_specific_7_1"
+  ],
+  "n_chunks": 1,
+  "chunk": 1,
+  "n_values": 357,
+  "check_code": "C16",
+  "group_codes": {
+    "L1": "gender::Male",
+    "L2": "gender::Female",
+    "L3": "gender::Other"
+  },
+  "condition_codes": {
+    "C00": "control",
+    "C01": "Corporate reliance",
+    "C02": "Social justice",
+    "C03": "Interview Prof. Maraun",
+    "C04": "Funding",
+    "C05": "Oil industry misinformation",
+    "C06": "Measurement & modeling (1)",
+    "C07": "Former skeptics",
+    "C08": "High public trust",
+    "C09": "Measurement & modeling (2)",
+    "C10": "Peer-review",
+    "C11": "Scientist community helpers",
+    "C12": "Consensus",
+    "C13": "Portrait Prof. Cherry",
+    "C14": "Model accuracy",
+    "C15": "Interview Prof. Sebille",
+    "C16": "Extreme weather predictions"
+  },
+  "condition_order": [
+    "C00",
+    "C05",
+    "C12",
+    "C16",
+    "C02",
+    "C14",
+    "C01",
+    "C04",
+    "C03",
+    "C10",
+    "C07",
+    "C11",
+    "C06",
+    "C15",
+    "C09",
+    "C08",
+    "C13"
+  ],
+  "ranges": {
+    "policy_specific_1_1": [
+      0.0,
+      100.0
+    ],
+    "policy_specific_2_1": [
+      0.0,
+      100.0
+    ],
+    "policy_specific_3_1": [
+      0.0,
+      100.0
+    ],
+    "policy_specific_4_1": [
+      0.0,
+      100.0
+    ],
+    "policy_specific_5_1": [
+      0.0,
+      100.0
+    ],
+    "policy_specific_6_1": [
+      0.0,
+      100.0
+    ],
+    "policy_specific_7_1": [
+      0.0,
+      100.0
+    ]
+  },
+  "prefix": "generation/runs/prefix_F3.md",
+  "read_check": "NOTE — this arm",
+  "prompt_sha256": "78b2b5fa860bdd7b1cf2a2e673d4224df3a3b4e34a80870ba9db72fa4f876b0f"
+}

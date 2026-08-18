@@ -1,0 +1,199 @@
+{
+  "interventions": [
+    "Corporate reliance",
+    "Social justice",
+    "Interview Prof. Maraun",
+    "Funding",
+    "Oil industry misinformation",
+    "Measurement & modeling (1)",
+    "Former skeptics",
+    "High public trust",
+    "Measurement & modeling (2)",
+    "Peer-review",
+    "Scientist community helpers",
+    "Consensus",
+    "Portrait Prof. Cherry",
+    "Model accuracy",
+    "Interview Prof. Sebille",
+    "Extreme weather predictions"
+  ],
+  "conditions": [
+    "control",
+    "Corporate reliance",
+    "Social justice",
+    "Interview Prof. Maraun",
+    "Funding",
+    "Oil industry misinformation",
+    "Measurement & modeling (1)",
+    "Former skeptics",
+    "High public trust",
+    "Measurement & modeling (2)",
+    "Peer-review",
+    "Scientist community helpers",
+    "Consensus",
+    "Portrait Prof. Cherry",
+    "Model accuracy",
+    "Interview Prof. Sebille",
+    "Extreme weather predictions"
+  ],
+  "codenames": [
+    "control",
+    "control",
+    "control",
+    "Extreme weather predictions",
+    "Portrait Prof. Cherry",
+    "Interview Prof. Maraun",
+    "Peer-review",
+    "Consensus",
+    "Funding",
+    "High public trust",
+    "Oil industry misinformation",
+    "Scientist community helpers",
+    "Social justice",
+    "Corporate reliance",
+    "Former skeptics",
+    "Measurement & modeling (1)",
+    "Measurement & modeling (2)",
+    "Model accuracy",
+    "Interview Prof. Sebille"
+  ],
+  "trust_items": [
+    "trust_competence_1",
+    "trust_competence_2",
+    "trust_competence_3",
+    "trust_integrity_1",
+    "trust_integrity_2",
+    "trust_integrity_3",
+    "trust_benevolence_1",
+    "trust_benevolence_2",
+    "trust_benevolence_3",
+    "trust_openness_1",
+    "trust_openness_2",
+    "trust_openness_3"
+  ],
+  "outcomes": [
+    "trust_multidimensional",
+    "trust_post",
+    "distrust_post",
+    "funding_perceptions",
+    "policy_role_mean",
+    "inst_trust_mean",
+    "belief_post",
+    "concern_mean",
+    "policy_general",
+    "policy_specific_mean",
+    "behavior_mean",
+    "donation_ams",
+    "newsletter_signup"
+  ],
+  "scale_0_100": [
+    "trust_multidimensional",
+    "trust_post",
+    "distrust_post",
+    "funding_perceptions",
+    "policy_role_mean",
+    "inst_trust_mean",
+    "belief_post",
+    "concern_mean",
+    "policy_general",
+    "policy_specific_mean",
+    "behavior_mean"
+  ],
+  "donation_range": [
+    0,
+    10
+  ],
+  "moderators": {
+    "gender": [
+      "Male",
+      "Female",
+      "Other"
+    ],
+    "age_band": [
+      "18-29",
+      "30-44",
+      "45-59",
+      "60+"
+    ],
+    "race": [
+      "White / Caucasian",
+      "Black / African American",
+      "Hispanic / Latino",
+      "Asian / Asian American",
+      "Other"
+    ],
+    "education": [
+      "Less than high school",
+      "High school diploma / GED",
+      "Some college or Associate's degree",
+      "Bachelor's degree",
+      "Master's degree / Professional degree",
+      "Doctorate degree / Ph.D."
+    ],
+    "income": [
+      "Less than $30,000",
+      "$30,000 to $55,999",
+      "$56,000 to $99,999",
+      "$100,000 to $167,999",
+      "$168,000 or more"
+    ],
+    "party": [
+      "Republican",
+      "Democrat",
+      "Independent",
+      "Other"
+    ]
+  },
+  "tier1_required": [
+    "profile_id",
+    "condition",
+    "gender",
+    "age_band",
+    "race",
+    "education",
+    "income",
+    "party",
+    "trust_multidimensional",
+    "trust_competence_1",
+    "trust_competence_2",
+    "trust_competence_3",
+    "trust_integrity_1",
+    "trust_integrity_2",
+    "trust_integrity_3",
+    "trust_benevolence_1",
+    "trust_benevolence_2",
+    "trust_benevolence_3",
+    "trust_openness_1",
+    "trust_openness_2",
+    "trust_openness_3",
+    "trust_post",
+    "distrust_post",
+    "funding_perceptions",
+    "policy_role_mean",
+    "inst_trust_mean",
+    "belief_post",
+    "concern_mean",
+    "policy_general",
+    "policy_specific_mean",
+    "behavior_mean",
+    "donation_ams",
+    "newsletter_signup"
+  ],
+  "tier2_main_cols": [
+    "condition",
+    "outcome",
+    "mean"
+  ],
+  "tier2_mod_cols": [
+    "condition",
+    "moderator",
+    "moderator_level",
+    "outcome",
+    "mean"
+  ],
+  "tier3_cols": [
+    "condition",
+    "outcome",
+    "ate"
+  ]
+}

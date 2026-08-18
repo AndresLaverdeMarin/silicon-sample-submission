@@ -1,0 +1,72 @@
+{
+  "task_id": "F2r1__funding_perceptions__gender__c01",
+  "draw": "F2r1",
+  "framing": "F2",
+  "repeat": 1,
+  "outcome": "funding_perceptions",
+  "moderator": "gender",
+  "groups": [
+    "gender::Male",
+    "gender::Female",
+    "gender::Other"
+  ],
+  "items": [
+    "funding_5"
+  ],
+  "n_chunks": 1,
+  "chunk": 1,
+  "n_values": 51,
+  "check_code": "C10",
+  "group_codes": {
+    "L1": "gender::Male",
+    "L2": "gender::Female",
+    "L3": "gender::Other"
+  },
+  "condition_codes": {
+    "C00": "control",
+    "C01": "Corporate reliance",
+    "C02": "Social justice",
+    "C03": "Interview Prof. Maraun",
+    "C04": "Funding",
+    "C05": "Oil industry misinformation",
+    "C06": "Measurement & modeling (1)",
+    "C07": "Former skeptics",
+    "C08": "High public trust",
+    "C09": "Measurement & modeling (2)",
+    "C10": "Peer-review",
+    "C11": "Scientist community helpers",
+    "C12": "Consensus",
+    "C13": "Portrait Prof. Cherry",
+    "C14": "Model accuracy",
+    "C15": "Interview Prof. Sebille",
+    "C16": "Extreme weather predictions"
+  },
+  "condition_order": [
+    "C00",
+    "C16",
+    "C15",
+    "C14",
+    "C13",
+    "C12",
+    "C11",
+    "C10",
+    "C09",
+    "C08",
+    "C07",
+    "C06",
+    "C05",
+    "C04",
+    "C03",
+    "C02",
+    "C01"
+  ],
+  "ranges": {
+    "funding_5": [
+      0.0,
+      100.0
+    ]
+  },
+  "prefix": "generation/runs/prefix_F2.md",
+  "read_check": "Before scientists can make",
+  "prompt_sha256": "6941eaf73ce00690a830818bea121ddf1288e8f3d3e4a6c6359da9186cd14da3"
+}

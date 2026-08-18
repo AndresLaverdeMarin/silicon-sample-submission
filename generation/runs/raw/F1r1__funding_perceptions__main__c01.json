@@ -1,0 +1,28 @@
+{
+  "task_id": "F1r1__funding_perceptions__main__c01",
+  "model_id": "claude-fable-5",
+  "read_check": "Todd’s Work Helping Communities",
+  "values": {
+    "G0": {
+      "funding_5": {
+        "C00": 43.0,
+        "C01": 42.0,
+        "C02": 42.8,
+        "C03": 42.2,
+        "C04": 36.5,
+        "C05": 41.3,
+        "C06": 42.2,
+        "C07": 41.6,
+        "C08": 42.3,
+        "C09": 42.5,
+        "C10": 42.1,
+        "C11": 41.5,
+        "C12": 41.8,
+        "C13": 42.3,
+        "C14": 41.7,
+        "C15": 42.0,
+        "C16": 41.2
+      }
+    }
+  }
+}

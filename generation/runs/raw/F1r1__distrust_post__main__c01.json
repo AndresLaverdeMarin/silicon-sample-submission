@@ -1,0 +1,28 @@
+{
+  "task_id": "F1r1__distrust_post__main__c01",
+  "model_id": "claude-fable-5",
+  "read_check": "Climate scientists are researchers",
+  "values": {
+    "G0": {
+      "distrust_1": {
+        "C00": 34.0,
+        "C01": 32.6,
+        "C02": 34.3,
+        "C03": 32.8,
+        "C04": 32.2,
+        "C05": 32.4,
+        "C06": 33.0,
+        "C07": 32.5,
+        "C08": 33.2,
+        "C09": 33.3,
+        "C10": 33.0,
+        "C11": 32.5,
+        "C12": 32.7,
+        "C13": 33.1,
+        "C14": 32.7,
+        "C15": 33.1,
+        "C16": 32.4
+      }
+    }
+  }
+}
