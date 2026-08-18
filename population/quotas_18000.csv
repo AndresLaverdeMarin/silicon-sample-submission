@@ -1,0 +1,10 @@
+variable,category,total,male,female
+Age,18-29,3629,1848,1781
+Age,30-44,4688,2365,2323
+Age,45-59,4122,2048,2074
+Age,60+,5561,2566,2995
+Race / Ethnicity,Asian / Asian American,1201,568,633
+Race / Ethnicity,Black / African American,2212,1042,1170
+Race / Ethnicity,Hispanic / Latino,3263,1646,1617
+Race / Ethnicity,Other,492,240,252
+Race / Ethnicity,White / Caucasian,10832,5332,5500

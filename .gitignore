@@ -4,8 +4,18 @@
 # maintainer/owner tooling — kept locally, never shipped to participating teams
 maintainer/
 
-# R / editor / OS cruft
+# generation build artifacts — large and deterministic, so they are rebuilt
+# rather than deposited. The inputs (population/) and the raw model answers
+# (generation/runs/) are deposited, so both are reproducible from the deposit.
+generation/build/population/
+generation/build/draws.csv
+.dryrun/
+
+# R / Python / editor / OS cruft
 .Rhistory
 .RData
 .Rproj.user/
 .DS_Store
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
