@@ -1,5 +1,5 @@
 {
-  "team_id": "example",
+  "team_id": "team_27",
   "team_name": "Example Team (replace me)",
   "contact": "name@institution.edu",
   "creators": [
@@ -9,15 +9,15 @@
       "orcid": ""
     }
   ],
-  "abstract": "",
+  "abstract": "Tier-2 cell-mean predictions for the Silicon Sample Benchmark, produced by a single model (claude-fable-5) asked to forecast group means directly. Each call shows all 17 condition texts at once and asks for one outcome, so the 17 arms are ranked inside a single answer. The 44 raw survey items are predicted and the 6 composite outcomes are computed in code. Every cell is predicted 6 times, as 3 prompt framings (plain, population-profile, and a two-stage control-then-shift form) x 2 repeats; the submitted value is the ensemble mean, and the moderator file is reconciled to the main file using the population shares of a 9,000-profile GSS-based synthetic sample. No human outcome data from this study informed any part of the pipeline.",
   "license": "CC-BY-4.0",
-  "tier": 1,
-  "entry": "primary",
-  "approach_family": "per-respondent simulation, single model",
+  "tier": 2,
+  "entry": "secondary-1",
+  "approach_family": "cell-level direct forecast; single model; prompt ensemble (3 framings x 2 repeats, mean); item-level prediction with composites computed in code; zero-shot",
   "models": [
-    "gpt-4o-mini-2024-07-18"
+    "claude-fable-5"
   ],
-  "code_repository": "https://github.com/your-team/your-repo",
+  "code_repository": "https://github.com/AndresLaverdeMarin/silicon-sample-submission",
   "code_doi": null,
   "disclosure_class": "A",
   "escrow_doi": null,
