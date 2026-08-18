@@ -94,7 +94,7 @@ make -C generation cells          # the 28 group descriptions
 make -C generation plan           # counts only
 make -C generation wave WAVE=1    # 612 task files + runs/waves/wave01.json
 
-# 4. Answer them (see "Running a wave" below), then
+# 4. Answer them (see "Running it in Claude Code with Fable 5"), then
 make -C generation collect        # validates every answer -> build/draws.csv
 
 # 5-6. Build the files and measure the draws
@@ -111,33 +111,156 @@ what is still missing. Waves never repeat finished work.
 
 ---
 
-## Running a wave
+## Running it in Claude Code with Fable 5
 
-612 tasks, one subagent each. In the Fable session:
+This is the only manual step of the pipeline. One person opens a Claude Code
+session, sets it to Fable 5, and hands the pending tasks to subagents. Every
+step before and after it is a script.
+
+### 1. Set up the session
+
+| What | How |
+|---|---|
+| Model | `/model`, then select **Fable 5**. Subagents inherit the session model, so this one setting decides the whole run. |
+| Reasoning effort | Use the highest effort the session offers. One task asks for up to 520 numbers in one table. |
+| Directory | The repository root. Every command below assumes it. |
+| Before you start | `git pull`, so your pending count includes the other person's answers. |
+
+Python 3 with the standard library is all you need to answer tasks. R is needed
+only for the final `make check`.
+
+### 2. Prove the session runs Fable
+
+Do this one time in each new session, before anything else.
 
 ```bash
-python3 generation/scripts/07_next_tasks.py --limit 12
+make -C generation probe
 ```
 
-That prints one line per pending task. Give one line to one subagent, about 8
-to 12 at a time. Each line is:
+It prints three questions. Put them to a **fresh subagent**, not to the session
+itself: the orchestrating context can hold an environment block that predates a
+`/model` switch. Then record what the subagent answered:
 
-> Read `generation/runs/prefix_F1.md` in full, then read
-> `generation/runs/tasks/<task_id>.md` and do exactly what it says. Write the
-> JSON file it asks for. Reply with only the number of values you wrote.
+```bash
+python3 generation/scripts/00_model_probe.py \
+    --record "claude-fable-5" \
+    --how "fresh subagent quoted its own system prompt"
+```
 
-The subagents inherit the session's model, so a Fable session gives Fable
-subagents. Two things check that, per answer and not per session:
+`03_prepare_wave.py` refuses to write a wave until a recorded probe names
+Fable. Every probe is kept, including a failed one, because registration item
+B.1 asks for them.
 
-* `model_id` — every answer states its own model. `04_collect.py` rejects any
-  answer that does not name Fable.
-* `read_check` — every answer quotes four words out of one condition text. The
-  17 texts sit in one shared prefix file instead of inside all 612 prompts, so
-  this is what proves a subagent opened it.
+### 3. The loop
 
-A rejected answer moves to `generation/runs/rejected/` with its reason, and its
-task becomes pending again. Run `collect` as often as you like; it is a pure
-function of the files on disk.
+```bash
+python3 generation/scripts/07_next_tasks.py --count      # what is left
+python3 generation/scripts/07_next_tasks.py --limit 12   # the next 12 prompts
+make -C generation collect                               # validate what landed
+```
+
+`--limit 12` prints one line per pending task, like this:
+
+> Read generation/runs/prefix_F1.md in full, then read
+> generation/runs/tasks/F1r1__inst_trust_mean__age_band__c01.md and do exactly
+> what it says. Write the JSON file it asks for. Reply with only the number of
+> values you wrote.
+
+Give **one line to one subagent**, and run 8 to 12 subagents at a time. Each
+subagent reads the shared prefix file with the 17 condition texts, reads its own
+task file, writes one JSON file into `generation/runs/raw/`, and replies with
+the count of values it wrote. When the batch finishes, run `collect`, then ask
+for the next 12. Repeat until the count is zero.
+
+`collect` is a pure function of the files on disk. Run it as often as you like.
+
+### 4. Rules while the run is open
+
+* **One task, one subagent.** Do not answer a task in the main context. Every
+  answer must come from the same kind of fresh context; the main session has
+  already read other tasks and other answers.
+* **Never re-run `make -C generation wave WAVE=1`.** All 612 prompts exist
+  already, and that command would overwrite `runs/waves/wave01.json`, which is
+  part of the deposit record. You do not need it.
+* **Never edit a file in `generation/runs/raw/` by hand.** Those are the raw
+  model answers and they are deposited unprocessed. If a number looks wrong,
+  delete the file and let the task run again.
+* **Never edit `scripts/` at the repository root.** That directory is the
+  organizers' engine. A local change makes our self-check disagree with their
+  scoring.
+* **Never use `git add -A` or `git add .`.** Stage files by name. Some files are
+  deliberately untracked and must stay out of the public history.
+* **Do not look for the human results of this study.** The entry is a blind
+  forecast, and any contact with the outcome data invalidates it.
+
+### 5. When an answer is rejected
+
+`04_collect.py` checks every answer against its own task spec. Four things cause
+a rejection:
+
+| Reason | What happened |
+|---|---|
+| `model_id` does not name Fable | the session was not Fable when that subagent ran |
+| `read_check` does not match | the subagent did not open the prefix file with the 17 texts |
+| the keys do not match the spec | a missing condition, a stray group, a wrong item code |
+| a value is not a number | a `null`, a string, or a placeholder |
+
+The file moves to `generation/runs/rejected/` with the reason in a
+`.reason.txt` beside it, and its task becomes pending again on its own. Read the
+reason, then let `07_next_tasks.py` hand the task out again.
+
+### 6. Two people at the same time
+
+`07_next_tasks.py` prints the pending tasks from the front of one sorted list,
+so two people who run it at the same moment get the same tasks. Split the work
+by draw and pass `--only-draw` on every command:
+
+```bash
+python3 generation/scripts/07_next_tasks.py --limit 12 \
+    --only-draw F2r2 --only-draw F3r1 --only-draw F3r2
+```
+
+There are six draws of 102 tasks each: `F1r1`, `F1r2`, `F2r1`, `F2r2`, `F3r1`,
+`F3r2`. Each answer is its own file, named after its task, so two people in two
+lanes never write the same file and git merges the work without a conflict.
+`HANDOVER.md` holds the full lane and commit rules.
+
+### 7. When every task is answered
+
+One person runs the last four steps. They take minutes.
+
+```bash
+make -C generation collect      # every answer -> build/draws.csv
+make -C generation aggregate    # writes the two files in predictions/
+make -C generation diagnose     # direction agreement and spread
+make manifest                   # SHA-256 into metadata.json
+make check                      # the organizers' validator - must be 0 fail
+```
+
+`aggregate` refuses to write `predictions/` while any cell is missing, and
+refuses again if any draw was not produced by Fable. If it stops, it tells you
+how many cells are short.
+
+Read the verdict line that `diagnose` prints. If direction agreement is below
+60 %, or the attenuation ratio is below 0.50, do **not** submit the ensemble
+mean. Re-run the aggregation with one framing:
+
+```bash
+make -C generation aggregate RULE=framing:F3
+```
+
+Both thresholds were fixed before any answer arrived. Follow what they say.
+
+### Troubleshooting
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| `03: no model probe names Fable` | step 0 was not recorded in this session | run `make -C generation probe` and record the answer |
+| `collect` rejects with `model_id ... is not Fable` | the session was not Fable when that subagent ran | set `/model`, probe again, let the task run again |
+| `collect` rejects with a `read_check` reason | the subagent answered without opening the prefix file | nothing to repair; the task is pending again |
+| `05: N cells have no prediction yet` | the run is not finished | answer more tasks, then `collect` again |
+| a subagent replies with prose instead of a count | it may not have written the file | look in `generation/runs/raw/`; if the file is missing, hand the task out again |
+| `make check` looks clean but reports very little | the staged short-circuit: `metadata.json` still points at the `example_*` files | delete them, run `make manifest`, then `make check` again |
 
 ---
 
