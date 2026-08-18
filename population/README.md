@@ -25,8 +25,9 @@ control = 9,000**. Our pool is exactly that size.
 | File | What it is |
 |---|---|
 | `gss_profiles.csv` | The base pool. 9,000 GSS respondents. See below. |
-| `quotas_18000.csv` | The quota target, recovered from the preregistration. |
-| `01c_quotas_18000.py` | Recovers that target. See "The quota source" below. |
+| `quotas_18000.csv` | The quota target, as published in the preregistration. |
+| `census_quota_targets.json` | The target the raking uses. Gender, age band, race and the two cross-quotas come from `quotas_18000.csv`; education and income come from Census CPS 2024. |
+| `01c_quotas_18000.py` | Recovers the target from the preregistration page. See "The quota source" below. |
 | `02_build_personas.py` | Rakes the GSS pool to the target, then quota-samples 9,000 personas. |
 | `quota_report.txt` | Realised against target, for every level. |
 
@@ -131,12 +132,26 @@ people, so its sampling noise is large. Every other cell is inside 0.61 pts.
 
 ## Where the code runs
 
-`gss_profiles.csv` is the input, and it is in this folder, so the two scripts
-run here without the sibling project.
+Both inputs of `02_build_personas.py` are in this folder — `gss_profiles.csv`
+and `census_quota_targets.json` — and it resolves them from its own directory.
+So it runs here, with no sibling project:
+
+```bash
+python3 population/02_build_personas.py              # writes here
+python3 population/02_build_personas.py --out DIR    # writes to DIR
+```
+
+The Tier-2 pipeline calls it with `--out generation/build/population/`, because
+`personas.csv` and `personas.jsonl` are 12 MB together and are deterministic.
+`quota_report.txt` in this folder is the deposited quota evidence; the run that
+produced it is reproducible byte for byte from the two inputs above and seed
+`20260807`.
 
 One input is **not** here: `01c_quotas_18000.py` reads Table 3 out of a local
-mirror of the benchmark preregistration. `quotas_18000.csv` is that script's
-output, so you do not need the mirror unless you rebuild the target.
+mirror of the benchmark preregistration, which is the organizers' own web page.
+Pass it with `--page`. You do not need the mirror unless you rebuild the target,
+because that script's outputs — `quotas_18000.csv` and
+`census_quota_targets.json` — are both in this folder.
 
 Record the code location in `metadata.json` → `code_repository`.
 

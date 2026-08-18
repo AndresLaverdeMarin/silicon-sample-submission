@@ -15,12 +15,19 @@ our pool, and neither is achieved by sampling each variable independently:
      would hand the simulation an easy, artificial signal.
 
 So we use real survey microdata as the source of joint structure and rake it to
-the Census targets:
+the quota targets:
 
-  base pool   clone_profiles/profiles.csv — 9,000 GSS respondents (2018-2024)
-              shipped by the benchmark team, carrying GSS post-stratification
-              weights (wtssps) and the full covariate joint distribution
-  targets     simulation/data/census_quota_targets.json (Census PEP 2024, 18+)
+  base pool   population/gss_profiles.csv — 9,000 GSS respondents (2018-2024).
+              This is the organizers' own v1 clone pool, NOT a benchmark
+              resource: see "Where this pool comes from" in population/README.md
+              and declare it in registration item D.1. It carries the GSS
+              post-stratification weights (wtssps) and the full covariate joint
+              distribution.
+  targets     population/census_quota_targets.json — gender / age_band / race
+              and the two cross-quotas come from preregistration Table 3
+              (N = 18,000), recovered by 01c_quotas_18000.py; education and
+              income come from Census CPS 2024 (step 01b in the sibling
+              project).
   method      iterative proportional fitting (raking) of wtssps to the Census
               gender / age-band / race margins, then quota sampling *within each
               condition* so every arm is separately balanced to the quotas
@@ -29,22 +36,34 @@ Conditions are quota-sampled independently per arm, which mirrors what
 randomisation achieves in the real study and removes demographic composition as
 a confound in the treatment effects.
 
-Outputs (simulation/personas/):
+Outputs (this folder, or --out DIR):
   personas.csv        one row per synthetic respondent, all 9,000
   personas.jsonl      same, plus a rendered natural-language persona description
   quota_report.txt    realised vs target quota check
+
+The two large outputs are build artifacts: `quota_report.txt` is kept in this
+folder as the deposited quota evidence, and the Tier-2 pipeline writes the
+personas themselves under generation/build/population/ (see generation/README.md).
+
+Usage:
+  python3 population/02_build_personas.py [--out DIR]
 """
 from __future__ import annotations
-import csv, json, math, random, re
+import argparse, csv, json, math, random, re
 from collections import Counter, defaultdict
 from pathlib import Path
 
 random.seed(20260807)                      # deterministic; recorded in the registration
 
-ROOT = Path(".")
-GSS = ROOT / "repos/llm_predictions_megastudy/clone_profiles/profiles.csv"
-TARGETS = json.loads((ROOT / "simulation/data/census_quota_targets.json").read_text())
-OUT = ROOT / "simulation/personas"
+HERE = Path(__file__).resolve().parent      # population/
+ap = argparse.ArgumentParser()
+ap.add_argument("--out", default=str(HERE),
+                help="output directory (default: population/)")
+args = ap.parse_args()
+
+GSS = HERE / "gss_profiles.csv"
+TARGETS = json.loads((HERE / "census_quota_targets.json").read_text())
+OUT = Path(args.out)
 OUT.mkdir(parents=True, exist_ok=True)
 
 # ---------------------------------------------------------------- design ----

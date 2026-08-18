@@ -1,0 +1,89 @@
+{
+  "source": "Benchmark preregistration Table 3 (N = 18,000), the rendered output of R/quotas_18000.R. Proportions match the parent megastudy, NOT raw Census. Recovered by simulation/scripts/01c_quotas_18000.py.",
+  "retrieved": "2026-08-07",
+  "matches": "R/quotas_18000.R in janpfander/llm_predictions_megastudy",
+  "n_human_target": 18000,
+  "n_synthetic": 9000,
+  "adult_population": 258830340,
+  "gender": {
+    "Male": 0.4903888888888889,
+    "Female": 0.5096111111111111
+  },
+  "age_band": {
+    "18-29": 0.2016111111111111,
+    "30-44": 0.2604444444444444,
+    "45-59": 0.229,
+    "60+": 0.30894444444444447
+  },
+  "age_band_by_gender": {
+    "18-29": {
+      "Male": 0.5092311931661615,
+      "Female": 0.4907688068338385
+    },
+    "30-44": {
+      "Male": 0.5044795221843004,
+      "Female": 0.49552047781569963
+    },
+    "45-59": {
+      "Male": 0.49684619116933526,
+      "Female": 0.5031538088306647
+    },
+    "60+": {
+      "Male": 0.46142780075525985,
+      "Female": 0.5385721992447402
+    }
+  },
+  "race": {
+    "Asian / Asian American": 0.06672222222222222,
+    "Black / African American": 0.1228888888888889,
+    "Hispanic / Latino": 0.1812777777777778,
+    "Other": 0.027333333333333334,
+    "White / Caucasian": 0.6017777777777777
+  },
+  "race_by_gender": {
+    "Asian / Asian American": {
+      "Male": 0.47293921731890093,
+      "Female": 0.5270607826810991
+    },
+    "Black / African American": {
+      "Male": 0.47106690777576854,
+      "Female": 0.5289330922242315
+    },
+    "Hispanic / Latino": {
+      "Male": 0.5044437634079069,
+      "Female": 0.4955562365920932
+    },
+    "Other": {
+      "Male": 0.4878048780487805,
+      "Female": 0.5121951219512195
+    },
+    "White / Caucasian": {
+      "Male": 0.49224519940915806,
+      "Female": 0.507754800590842
+    }
+  },
+  "education": {
+    "Less than high school": 0.09266449421063579,
+    "High school diploma / GED": 0.2867718998205028,
+    "Some college or Associate's degree": 0.26285177224648903,
+    "Bachelor's degree": 0.22421749212292094,
+    "Master's degree / Professional degree": 0.11371497685024691,
+    "Doctorate degree / Ph.D.": 0.019779364749204588
+  },
+  "income": {
+    "Less than $30,000": 0.16883116883116883,
+    "$30,000 to $55,999": 0.1690709290709291,
+    "$56,000 to $99,999": 0.23452547452547454,
+    "$100,000 to $167,999": 0.20315684315684315,
+    "$168,000 or more": 0.22441558441558443
+  },
+  "gss_conditional_splits": {
+    "high_school_to_hs_grad": 0.6431965442764579,
+    "graduate_to_masters_prof": 0.8518336843927634
+  },
+  "sources_education_income": {
+    "education": "US Census Bureau, CPS 2024 Educational Attainment, Table 1, 18+",
+    "income": "US Census Bureau, P60-286 Income in the United States: 2024, Table A-2"
+  },
+  "superseded": "The gender, age_band, race and cross-quota blocks replace values that 01_census_quotas.py computed from raw Census PEP 2024. Those were wrong: the 18-29 band was 19.18 % instead of 20.2 %."
+}

@@ -22,38 +22,46 @@ have. But the rendered table is published as Table 3 of the preregistration,
 and the mirror of that page is on disk. So we read the numbers from there.
 
 INPUT
-  site/janpfander.github.io/llm_predictions_megastudy/
-      preregistration_benchmark.html      (Table 3, N = 18,000)
+  A local mirror of the benchmark preregistration page (Table 3, N = 18,000):
+      preregistration_benchmark.html
+  That mirror is NOT part of this repository — it is the organizers' own web
+  page. Pass it with --page. You only need it to rebuild the target; the
+  rebuilt output is committed, so the rest of the pipeline runs without it.
 
 OUTPUT
-  simulation/data/quotas_18000.csv        the recovered table, as published
-  simulation/data/census_quota_targets.json
+  population/quotas_18000.csv             the recovered table, as published
+  population/census_quota_targets.json
       the `gender`, `age_band`, `race`, `age_band_by_gender` and
       `race_by_gender` blocks are replaced. `education`, `income` and
       `gss_conditional_splits` are NOT touched: Table 3 does not hold them,
-      and they come from step 1b.
+      and they come from step 1b (Census CPS 2024, in the sibling project).
 
-Run it from the repository root:
+Usage:
 
-    python3 simulation/scripts/01c_quotas_18000.py
+    python3 population/01c_quotas_18000.py --page path/to/preregistration_benchmark.html
 
 Then build the personas again:
 
-    python3 simulation/scripts/02_build_personas.py
+    python3 population/02_build_personas.py
 """
 from __future__ import annotations
 
+import argparse
 import csv
 import html
 import json
 import re
 from pathlib import Path
 
-ROOT = Path(".")
-PAGE = ROOT / ("site/janpfander.github.io/llm_predictions_megastudy/"
-               "preregistration_benchmark.html")
-TARGETS = ROOT / "simulation/data/census_quota_targets.json"
-TABLE_OUT = ROOT / "simulation/data/quotas_18000.csv"
+HERE = Path(__file__).resolve().parent       # population/
+_ap = argparse.ArgumentParser()
+_ap.add_argument("--page", required=True,
+                 help="local mirror of preregistration_benchmark.html (Table 3)")
+_args = _ap.parse_args()
+
+PAGE = Path(_args.page)
+TARGETS = HERE / "census_quota_targets.json"
+TABLE_OUT = HERE / "quotas_18000.csv"
 
 # Table 3 names the largest race group "White (non-Hispanic)". The study's own
 # response option is "White / Caucasian". Map it; change no other label.
