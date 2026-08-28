@@ -156,16 +156,17 @@ is our choice, with the reason.
    between arms by under 1 point; the attributes that are not quota-sampled
    float by 6 to 8, as they would under real randomisation.
 
-4. **We reuse the organizers' 9,000-person GSS draw instead of drawing our
-   own.** Someone had to pick which 9,000 GSS respondents; the organizers did,
-   for their own earlier v1 simulation, and published the file in their
-   research repository. Using it is allowed and it saves rebuilding a draw,
-   but it means our population IS the one behind their reference simulation,
-   and we inherit choices we did not make — their weights are renormalized so
-   each wave contributes equally, so `wtssps` is not the raw GSS weight.
-   Registration items D.1 and I.2 must say we reused their draw: not that we
-   drew it, and not that the benchmark shipped it, because the benchmark ships
-   no pool at all.
+4. **The 9,000 people were picked by the organizers, not by us.** The four
+   GSS waves hold more respondents than we need, so somebody had to choose
+   which 9,000 to use and how to balance four years of different sizes. The
+   organizers made that choice for their own earlier simulation and published
+   the file; we copied it. That is allowed — the FAQ names GSS as a source —
+   but two natural sentences would be untrue: we did not draw this pool, and
+   the benchmark did not supply it, because it supplies no people at all.
+   Registration items D.1 and I.2 say we reused their selection. Two things
+   come with it: our population is the same one behind their own reference
+   run, and their weights are renormalized so each wave counts equally, which
+   is why `wtssps` is not the raw GSS weight.
 
 ## Where the code runs
 
