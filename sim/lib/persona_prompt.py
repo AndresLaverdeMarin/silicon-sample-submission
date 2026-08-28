@@ -26,9 +26,9 @@ import re
 # stage 3 read its answer off the persona instead of simulating a person, and
 # that inflates the R2 the Tier-1 stereotyping check measures.
 SYSTEM = ("You write short, plain descriptions of one person. You use ONLY "
-          "the facts you are given. You never invent a fact, a name, a job, "
-          "an opinion or an event. Views the facts state are yours to write; "
-          "views they do not state are not.")
+          "the facts you are given. You never invent a fact, a name, a job or "
+          "an event. Some of the facts are opinions. Write those. Never add "
+          "an opinion that is not in the facts.")
 
 VOICE_RULE = {
     "second_person": 'Write in the second person. Refer to the person as "You".',
@@ -46,8 +46,8 @@ Rules:
 - Use every fact. Add nothing.
 - Never write "survey", "study" or "research".
 - Do not give the person a name, a job or a hobby.
-- Write the views the facts give. Do not add any view they do not give, and
-  do not say how the person would answer a question.
+- Some facts are opinions. Write them. Add no other opinion.
+- Do not say how the person would answer a question.
 - Do not add a closing sentence about the person's background or diversity.
 
 Write only the description."""
