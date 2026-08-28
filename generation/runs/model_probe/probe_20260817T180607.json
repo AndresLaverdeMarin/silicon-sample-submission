@@ -1,7 +1,0 @@
-{
-  "recorded_at": "2026-08-17T18:06:07",
-  "model_id": "claude-fable-5",
-  "source_of_identifier": "freshly spawned subagent quoted its own system prompt verbatim: 'You are powered by the model named Fable 5. The exact model ID is claude-fable-5.' Subagents are what answer every task.",
-  "note": "Recorded 2026-08-17 after /model set the session to Fable 5. The orchestrating context's environment block predates the switch, so the probe asked a fresh spawn instead of trusting it. Session reasoning effort: max. Per-answer enforcement stays on regardless: every answer records its own model_id and 04_collect.py rejects non-Fable.",
-  "is_fable": true
-}
