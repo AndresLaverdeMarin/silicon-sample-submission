@@ -140,8 +140,10 @@ is our choice, with the reason.
    Party is never drawn: it arrives attached to a real person, so its joint
    with every other attribute is the GSS joint — stage 1 measures that gap at
    a median of 1 to 2 percentage points. The human party mix was never
-   quota-enforced and stays sealed, so we plan a re-weighting check once the
-   answers exist.
+   quota-enforced and stays sealed, but it matters less than it looks:
+   submissions are never reweighted, and the ATEs are differences from the
+   shared control, so a compositional skew cancels. It reaches only the
+   control-condition distribution metrics, which are Tier 1 only.
 
 2. **Two coarse GSS variables are split with Census shares.** `degree` and
    `income16` are coarser than the study's categories, so Census conditional
