@@ -1,21 +1,21 @@
 {
   "team_id": "team_27",
-  "team_name": "Example Team (replace me)",
-  "contact": "name@institution.edu",
+  "team_name": "TODO \u2014 replace before deposit",
+  "contact": "TODO \u2014 replace before deposit",
   "creators": [
     {
-      "name": "Lastname, Firstname",
-      "affiliation": "Your institution",
+      "name": "TODO, Firstname",
+      "affiliation": "TODO",
       "orcid": ""
     }
   ],
-  "abstract": "Tier-2 cell-mean predictions for the Silicon Sample Benchmark, produced by a single model (claude-fable-5) asked to forecast group means directly. Each call shows all 17 condition texts at once and asks for one outcome, so the 17 arms are ranked inside a single answer. The 44 raw survey items are predicted and the 6 composite outcomes are computed in code. Every cell is predicted 6 times, as 3 prompt framings (plain, population-profile, and a two-stage control-then-shift form) x 2 repeats; the submitted value is the ensemble mean, and the moderator file is reconciled to the main file using the population shares of a 9,000-profile GSS-based synthetic sample. No human outcome data from this study informed any part of the pipeline.",
+  "abstract": "Tier-1 individual-level predictions for the Silicon Sample Benchmark. A synthetic panel of 9,000 respondents is built by raking the post-stratification weights of 9,000 General Social Survey respondents onto the preregistered quota margins, then quota-sampling within each of the 17 conditions, so demographic composition is not a confound of the treatment effects. Each respondent is assigned one condition (500 per intervention, 1,000 in control, one of the three filler texts for each control respondent), is written as a short prose persona, and then answers all 44 raw survey items one item at a time with local open weights. The 6 composite outcomes are built by the benchmark's own scripts/clean.R from the raw items, never in our code. No human outcome data from this study, or from any pilot of it, informed any part of the pipeline.",
   "license": "CC-BY-4.0",
-  "tier": 2,
-  "entry": "secondary-1",
-  "approach_family": "cell-level direct forecast; single model; prompt ensemble (3 framings x 2 repeats, mean); item-level prediction with composites computed in code; zero-shot",
+  "tier": 1,
+  "entry": "primary",
+  "approach_family": "per-respondent simulation; GSS-based quota-matched synthetic panel of 9,000; one local open-weights model answers each of the 44 survey items for each respondent; item-level prompting, composites computed by the benchmark's own scripts/clean.R; zero-shot",
   "models": [
-    "claude-fable-5"
+    "Qwen/Qwen3.8-27B"
   ],
   "code_repository": "https://github.com/AndresLaverdeMarin/silicon-sample-submission",
   "code_doi": null,

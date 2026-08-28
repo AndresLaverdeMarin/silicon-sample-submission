@@ -1,5 +1,32 @@
 # Silicon Sample Benchmark — method registration form
 
+> ## ⚠ STATUS — this form is being rewritten for a TIER 1 entry
+>
+> **Do not deposit this file as it stands.** Everything below item D.1 still
+> describes the entry's earlier form: a **Tier-2** cell-mean forecast made by
+> `claude-fable-5`, with a pipeline in `generation/`. That entry was withdrawn
+> on 2026-08-28 and `generation/` was deleted. The text is kept, and not
+> blanked, so that a reader can see what changed. The Tier-2 form is in git
+> history at commit `aa4e060`.
+>
+> **What is true now:**
+>
+> | item | state |
+> |---|---|
+> | tier | **1** — 9,000 individual synthetic respondents |
+> | answering model | `Qwen/Qwen3.8-27B`, local weights, vLLM |
+> | persona writer | **not chosen yet** |
+> | D.1, D.3 (population) | **current and correct** — `population/` is unchanged |
+> | D.2 (verbalization) | rewritten below; the Tier-2 answer was false for Tier 1 |
+> | every other item | **superseded**, and rewritten as each stage runs |
+>
+> Items that name `generation/`, `claude-fable-5`, 612 tasks, 28 cell
+> profiles, 3 framings, or 6 draws per cell describe the withdrawn entry.
+>
+> B.1 and B.2 need the exact model identifier and the call-date window of the
+> run that produced the answers. That run has not happened, so they stay
+> `PENDING` — a wrong declaration is worse than an open one.
+
 Fill in every item before the prediction lock; this file ships inside your repo's Zenodo release
 (see the README's *Deposit* step). This form covers **one entry** (one repo / one Zenodo release,
 `primary` or `secondary-k` — see the README's *What counts as a submission*); if you submit several
@@ -168,15 +195,18 @@ writes, before the deposit. Everything else is pre-specified.
   check. Known limits, including the two GSS variables that are coarser than the study's categories,
   are listed in `population/README.md`.
 - **D.2 Profile verbalization** — which variables, rendered how (template vs generated narrative; if generated: model + prompt):
-  Not verbalized per person — this is Tier 2, so no persona is ever addressed. The 9,000 profiles are
-  aggregated into 28 group descriptions by `generation/scripts/02_cell_profiles.py`: the whole sample
-  and the 27 moderator levels. Each is one paragraph from a fixed template (no model involved),
-  reporting the group's share of the sample and n, its gender split, median age band and mean age,
-  its three largest race groups, the share holding a bachelor's degree or higher, the shares under
-  $30,000 and at $100,000 or more, its party split, its conservative and liberal shares, its prior
-  confidence in the scientific community, and its born-again share. The clause that merely restates
-  the group's own definition is dropped. Framing `F1` receives no such description, by design; `F2`
-  and `F3` receive it. The exact 28 paragraphs are deposited in `generation/build/cells.json`.
+  `PENDING (stage 2 of the Tier-1 pipeline)`. **This entry is Tier 1, so every profile IS
+  verbalized and addressed as a person** — the Tier-2 answer that stood here, which said no persona
+  is ever addressed, does not apply and has been removed.
+  Decided so far: each of the 9,000 profiles becomes one short prose persona written by a language
+  model from its own attributes. The variables offered to the writer are the six scored moderators
+  (gender, age band, race, education, income, party) and nine unscored attributes carried by the
+  pool (ideology, household size, social class, region, urbanicity, religion, religiosity,
+  born-again, prior confidence in the scientific community). The writer model, its prompt, its
+  sampling settings and the fidelity gates are recorded here when stage 2 runs, together with the
+  measured share of attributes that reach the written text.
+  `sim/01_persona_characteristics.py` writes the table the writer reads, and its checks are in
+  `sim/out/01_report.txt`.
 - **D.3 Assignment & weighting** — number of personas, assignment to conditions (your responsibility, all 17 conditions), reuse, weighting/matching:
   9,000 profiles: 500 in each of the 16 interventions and 1,000 in control, matching the per-cell
   sizes of the human half that submissions are scored against. Each profile is assigned to exactly
