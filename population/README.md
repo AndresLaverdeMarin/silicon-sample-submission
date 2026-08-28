@@ -69,6 +69,46 @@ the quota **margins**.
 same quotas on its own. This is what randomisation does in the real study. It
 stops demographic composition from confounding the treatment effects.
 
+## Sources
+
+Every input, with its official reference. `census_quota_targets.json` records
+the same provenance in machine-readable form.
+
+| Input | Used for | Official source |
+|---|---|---|
+| General Social Survey (GSS), waves 2018, 2021, 2022, 2024 | the base pool of 9,000 real respondents, their post-stratification weights (`wtssps`) and the joint structure of every attribute | NORC at the University of Chicago — <https://gss.norc.org/> |
+| Benchmark preregistration, Table 3 (N = 18,000) | the quota target for gender, age band, race, and the gender x age and gender x race cross-quotas | <https://janpfander.github.io/llm_predictions_megastudy/preregistration.html> |
+| US Census Bureau, CPS 2024, Educational Attainment, Table 1, 18+ | the education margin | Current Population Survey detailed tables — <https://www.census.gov/topics/education/educational-attainment.html> |
+| US Census Bureau, P60-286, *Income in the United States: 2024*, Table A-2 | the income margin | <https://www.census.gov/library/publications/2025/demo/p60-286.html> |
+
+**The GSS file itself is not ours and is not a benchmark resource.** It is the
+organizers' own v1 clone pool, `clone_profiles/profiles.csv` from
+<https://github.com/janpfander/llm_predictions_megastudy>. Read "Where this
+pool comes from" above before citing it, and declare it in registration item
+D.1.
+
+## How the data is modified
+
+The GSS pool is not used as it stands. Four changes, in order:
+
+1. **Recode to the study's categories.** GSS variable names and codes become
+   the exact level strings of `scripts/lib/submission_spec.R`. Two GSS
+   variables are coarser than the study needs and are split with Census
+   conditional shares — see *Known limits* 2.
+2. **Rake the weights.** Iterative proportional fitting moves the GSS
+   post-stratification weights onto the quota margins above. The joint
+   structure of the pool is kept; only the weights move.
+3. **Quota-sample 9,000 personas** from the raked pool, taking the gender x
+   age and gender x race cross-quotas **independently inside each of the 17
+   conditions**. This is what randomisation does in the real study, and it
+   stops demographic composition from confounding a treatment effect.
+4. **Assign one condition to each persona.** 500 for each of the 16
+   interventions and 1,000 in control. No persona is used in more than one
+   condition.
+
+Deterministic throughout: seed `20260807`. `quota_report.txt` is the realised
+against target check.
+
 ## The quota source — read this before you change anything
 
 **Do not compute the quotas from raw Census data.**
@@ -102,8 +142,17 @@ people, so its sampling noise is large. Every other cell is inside 0.61 pts.
 
 ## Known limits
 
-1. **Party is raked to the GSS, not to the Census.** The Census collects no
-   party ID. The survey's 4-option wording pushes leaners into Independent.
+1. **Party is raked to the GSS, not to the Census, and party is MANDATORY.**
+   The Census collects no party ID, so there is no census margin to rake to.
+   The party margin therefore comes from the GSS alone.
+   This is not optional to carry: `party` is in `tier1_required`
+   (`submission_spec.R:107`), so `scripts/clean.R` stops without it, and it is
+   one of the six scored moderators — 4 of the 27 moderator levels in the
+   Tier-2 grid. A party distribution that is wrong biases those 4 levels x 13
+   outcomes directly.
+   A second, separate problem: the survey offers 4 options and the GSS offers
+   7, so GSS leaners collapse into `Independent`. Our realised share is
+   39.7 % Independent, which is high against most 3-option polls.
 2. **Two GSS variables are too coarse** for the study's categories, and are
    split with Census conditional shares:
    - `degree` puts "some college, no degree" into "high school".
