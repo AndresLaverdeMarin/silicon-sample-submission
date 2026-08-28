@@ -75,7 +75,7 @@ The GSS pool is not used as it stands. Four changes, in order:
 1. **Recode to the study's categories.** GSS variable names and codes become
    the exact level strings of `scripts/lib/submission_spec.R`. Two GSS
    variables are coarser than the study needs and are split with Census
-   conditional shares — see *Known limits* 2. Party goes the other way: the
+   conditional shares — see *Comments* 2. Party goes the other way: the
    megastudy asks the GSS root question word for word but never asks the
    follow-up that splits Independents into leaners, so the GSS 7-point value
    collapses to the study's 4 options and reproduces its instrument. The raw
@@ -129,7 +129,7 @@ report.
 The worst cross-quota cell is `Other` race. It holds about 250 of the 9,000
 people, so its sampling noise is large. Every other cell is inside 0.61 pts.
 
-## Known limits
+## Comments
 
 Each item says what IS true first, then what stays open. None of them is a
 defect of the build; they are the places where the pool can differ from the

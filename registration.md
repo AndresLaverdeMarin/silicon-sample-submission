@@ -192,7 +192,7 @@ writes, before the deposit. Everything else is pre-specified.
   treatment effects. Real microdata is used for the joint structure because independent draws per
   variable produce people who do not exist and make the moderators independent, which they are not.
   Deterministic: seed `20260807`, and `population/quota_report.txt` is the realised-against-target
-  check. Known limits, including the two GSS variables that are coarser than the study's categories,
+  check. The comments section of `population/README.md`, including the two GSS variables that are coarser than the study's categories,
   are listed in `population/README.md`.
 - **D.2 Profile verbalization** — which variables, rendered how (template vs generated narrative; if generated: model + prompt):
   `PENDING (stage 2 of the Tier-1 pipeline)`. **This entry is Tier 1, so every profile IS
