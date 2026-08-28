@@ -131,55 +131,32 @@ people, so its sampling noise is large. Every other cell is inside 0.61 pts.
 
 ## Comments
 
-Each item says what IS true first, then what stays open. None of them is a
-defect of the build; they are the places where the pool can differ from the
-humans, and we cannot see the humans.
+The benchmark ships no participant pool and does not say how to build one —
+registration item D.1 asks only that we report what we did. So each of these
+is our choice, with the reason.
 
-1. **Party is representative by construction; the human target is unknown.**
-   We never draw party. Each persona is one real GSS respondent, so party
-   arrives attached to that person's age, education, race, religion and class,
-   and the joint is the GSS joint. Stage 1 measures it: the party share inside
-   each level of age band, ideology, religion and social class sits within a
-   median of 1 to 2 percentage points of the weighted GSS.
-   Raking moves the party MARGIN a little, because it targets education and
-   income and both correlate with party: Democrat 29.8 to 32.7, Independent
-   42.1 to 39.7, Republican 24.9 to 24.4. That is the cost of matching the
-   study's education and income margins, not a distortion of party.
-   **What stays open:** whether the HUMANS look like the US adult population
-   on party. `quotas_18000.csv` holds `Age` and `Race / Ethnicity` only, so
-   party was never quota-enforced in recruitment, and the human mix stays
-   sealed until the lock. If it skews, our baselines shift — climate trust is
-   partisan and the main cell means are sample averages. The within-group
-   analyses are unaffected. *Planned check, once answers exist:* re-weight
-   them to several party mixes and report how far the means move.
+1. **Party comes from the GSS.** The Census collects no party ID, and the
+   benchmark quotas only age and race, so the GSS is the only national source.
+   Party is never drawn: it arrives attached to a real person, so its joint
+   with every other attribute is the GSS joint — stage 1 measures that gap at
+   a median of 1 to 2 percentage points. The human party mix was never
+   quota-enforced and stays sealed, so we plan a re-weighting check once the
+   answers exist.
 
-2. **Education and income match the Census margin; two GSS variables needed
-   splitting to get there.** Both are raking targets, so the pool hits the
-   Census CPS 2024 and P60-286 margins. Two GSS variables are coarser than the
-   study's categories and are split with Census conditional shares:
-   `degree` puts "some college, no degree" into "high school", and `income16`
-   top-codes at "$170,000 or over".
-   **What stays open:** the split is a share, not a person. Inside those two
-   categories the assignment is probabilistic, so an individual can land in
-   the wrong band even though the margin is right. Both are scored
-   moderators, so this lands on the subgroup analyses.
+2. **Two coarse GSS variables are split with Census shares.** `degree` and
+   `income16` are coarser than the study's categories, so Census conditional
+   shares split them. The margin is then right, and the assignment inside
+   those two categories is probabilistic.
 
-3. **Every arm is balanced on the quota dimensions; the others float, as they
-   do in a real trial.** Quota sampling runs inside each of the 17 conditions,
-   so gender, age band and race are near-identical across arms — the largest
-   spread between arms is 0.3, 0.9 and 0.6 percentage points. Education and
-   income are raked to their margins for the pool as a whole, but are not
-   quota-sampled per arm.
-   **What stays open:** the attributes that are not quota-sampled vary between
-   arms — education 7.4, income 6.0, party 8.2, religion 7.2 percentage
-   points. Real randomisation has the same property, and with 500 per arm this
-   is the size to expect, but it is unmodelled noise in every ATE.
+3. **Quota sampling runs inside each arm, not across the pool.** That is what
+   randomisation does in the real study, and it stops demographic composition
+   from confounding a treatment effect. Gender, age and race then differ
+   between arms by under 1 point; the attributes that are not quota-sampled
+   float by 6 to 8, as they would under real randomisation.
 
-4. **The GSS pool is real people; we did not draw it.** It is the organizers'
-   own v1 clone pool, reused as it stands.
-   **What stays open:** nothing technical, but it must be declared. See
-   *Sources* above, and registration item D.1. Do not write that the benchmark
-   shipped it.
+4. **The GSS pool is the organizers' own, reused as it stands.** We did not
+   draw it. Declare that in registration item D.1, and never write that the
+   benchmark shipped it.
 
 ## Where the code runs
 
