@@ -206,6 +206,11 @@ for r in raw:
         "education": map_education(r["degree"], rng),
         "income": inc,
         "party": map_party(r["partyid"]),
+        # The RAW 7-point GSS value, kept beside the collapsed one. It
+        # never reaches the submission — `party` is the scored column —
+        # but a persona written from "independent, close to republican"
+        # reads as a person, and "Independent" does not.
+        "party_detail": (r["partyid"] or "").strip(),
         "ideology": (r["polviews"] or "moderate, middle of the road").strip(),
         "household_size": r["hompop"] if r["hompop"] not in ("NA", "") else "2",
         "social_class": (r["class"] or "middle class").strip(),
@@ -355,8 +360,9 @@ def narrative(p):
 
 # ------------------------------------------------------------- outputs ------
 cols = ["profile_id", "condition", "gender", "age", "age_band", "race", "education",
-        "income", "party", "ideology", "household_size", "social_class", "region",
-        "urbanicity", "religion", "religiosity", "born_again", "trust_science_prior"]
+        "income", "party", "party_detail", "ideology", "household_size",
+        "social_class", "region", "urbanicity", "religion", "religiosity",
+        "born_again", "trust_science_prior"]
 with open(OUT / "personas.csv", "w", newline="") as f:
     w = csv.DictWriter(f, fieldnames=cols, extrasaction="ignore")
     w.writeheader(); w.writerows(personas)

@@ -16,7 +16,7 @@ for the numbers the pipeline enforces.
 | `quotas_18000.csv` | The quota target, as published in the preregistration. |
 | `census_quota_targets.json` | The target the raking uses. Gender, age band, race and the two cross-quotas come from `quotas_18000.csv`; education and income come from Census CPS 2024. |
 | `01c_quotas_18000.py` | Recovers the target from the preregistration page. See "The quota source" below. |
-| `02_build_personas.py` | Rakes the GSS pool to the target, then quota-samples 9,000 personas. |
+| `02_build_personas.py` | Rakes the GSS pool to the target, then quota-samples 9,000 personas. It writes `party` (the study's 4 options, the scored column) and `party_detail` (the raw GSS 7-point value, for the persona writer only). |
 | `quota_report.txt` | Realised against target, for every level. |
 
 **The base pool is real people.** We use 9,000 General Social Survey (GSS)
@@ -142,17 +142,43 @@ people, so its sampling noise is large. Every other cell is inside 0.61 pts.
 
 ## Known limits
 
-1. **Party is raked to the GSS, not to the Census, and party is MANDATORY.**
-   The Census collects no party ID, so there is no census margin to rake to.
-   The party margin therefore comes from the GSS alone.
-   This is not optional to carry: `party` is in `tier1_required`
-   (`submission_spec.R:107`), so `scripts/clean.R` stops without it, and it is
-   one of the six scored moderators — 4 of the 27 moderator levels in the
-   Tier-2 grid. A party distribution that is wrong biases those 4 levels x 13
-   outcomes directly.
-   A second, separate problem: the survey offers 4 options and the GSS offers
-   7, so GSS leaners collapse into `Independent`. Our realised share is
-   39.7 % Independent, which is high against most 3-option polls.
+1. **The human party mix is unknown, and party is not quota-matched.**
+   `quotas_18000.csv` holds two variables, `Age` and `Race / Ethnicity`,
+   crossed with gender. Party is not in it, so the human sample's party mix is
+   whatever recruitment produced. We rake to the GSS because the Census
+   collects no party ID and the GSS is the only national source. That is a
+   bet that the panel resembles the US adult population on party, and it
+   cannot be checked while the human data are sealed.
+   **It matters because trust in climate scientists is strongly partisan.**
+   The Tier-1 and Tier-2 *main* cell means are averages over our sample, so a
+   different party mix shifts every control mean and every ATE baseline, even
+   when the within-party answers are right. The within-group analyses are
+   insulated: interactions and the parity gap are computed inside each party
+   level, where a wrong marginal costs precision and not bias.
+   *Planned check, after the answers exist:* re-weight the 9,000 answers to
+   several plausible party mixes and report how far the cell means move.
+
+   **The 7-point to 4-option collapse is NOT a limit.** The megastudy asks
+   the GSS root question word for word — *"Generally speaking, do you usually
+   think of yourself as a Republican, a Democrat, an Independent, or what?"*
+   The GSS then asks a follow-up that splits Independents into leaners; the
+   megastudy never asks it. So collapsing 7 to 4 reproduces the megastudy's
+   own instrument. 1,893 of our 3,571 Independents (53 %) are GSS leaners,
+   and the megastudy's question hides them in the same way.
+   `party_detail` carries the raw 7-point value for the persona writer. It
+   never reaches the submission: `party` is the scored column.
+
+   **Party carries three scored analyses**, on the four illustrative outcomes
+   the preregistration names (multidimensional trust, donation to AMS,
+   funding perceptions, general policy support) — not on all 13:
+   - condition x moderator interactions (Tiers 1-2);
+   - the demographic parity gap, whose worked example in
+     `preregistration_benchmark.qmd` is Republicans against Democrats;
+   - **demographic predictability, Tier 1 only** — an OLS R² of the outcome
+     on party plus condition fixed effects, compared between humans and us.
+     An R² higher than the humans' flags stereotyping. A persona written
+     from a vivid party label is exactly what inflates it.
+
 2. **Two GSS variables are too coarse** for the study's categories, and are
    split with Census conditional shares:
    - `degree` puts "some college, no degree" into "high school".

@@ -15,9 +15,9 @@ CHECKS
 
 WRITTEN
 --------------------------------------------------------------------------
-  sim/out/01_personas.csv   9,000 rows x 20 columns
+  sim/out/01_personas.csv   9,000 rows x 21 columns
   scored moderators  gender, age_band, race, education, income, party
-  not scored         ideology, household_size, social_class, region, urbanicity, religion, religiosity, born_again, trust_science_prior
+  not scored         party_detail, ideology, household_size, social_class, region, urbanicity, religion, religiosity, born_again, trust_science_prior
   control fillers    {'neckties': 334, 'dances': 333, 'baseball': 333}
 
 REALISED MARGINS

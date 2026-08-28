@@ -65,8 +65,8 @@ POOL_DIR = OUT / "00_pool"
 
 # The attributes the benchmark does NOT score. Stage 2 uses them to write a
 # person; nothing downstream may treat them as an outcome or a moderator.
-EXTRA = ["ideology", "household_size", "social_class", "region",
-         "urbanicity", "religion", "religiosity", "born_again",
+EXTRA = ["party_detail", "ideology", "household_size", "social_class",
+         "region", "urbanicity", "religion", "religiosity", "born_again",
          "trust_science_prior"]
 
 # One control respondent reads ONE filler. The three share the label
