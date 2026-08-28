@@ -4,21 +4,9 @@ This folder documents how we build the 9,000 synthetic respondents. The
 benchmark asks for this in `registration.md`, section D (Persona construction)
 and section K.1 (Code & materials).
 
-## Why 9,000
-
-The benchmark targets **N = 18,000** human responses: 1,000 for each of the 16
-text interventions, plus 2,000 in the control. The parent megastudy targets
-N = 22,000, but the benchmark drops the 4 interactive conditions.
-
-The 18,000 humans are then **split in half at random**:
-
-- **Human 1** is the reference half. Every submission is scored against it.
-- **Human 2** predicts Human 1, like a submission. Its score is the human
-  replication reference.
-
-A Tier-1 entry must hold at least as many synthetic respondents as the half it
-is scored against. So the floor is **500 for each intervention and 1,000 in
-control = 9,000**. Our pool is exactly that size.
+The size is the benchmark's own rule, not ours: 500 for each intervention and
+1,000 in control. See `../README.md` and `../FAQ.md`, and `sim/lib/spec.py`
+for the numbers the pipeline enforces.
 
 ## The method
 
