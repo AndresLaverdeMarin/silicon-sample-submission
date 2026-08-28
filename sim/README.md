@@ -88,6 +88,15 @@ outcomes from the raw items. Scoring reads the composite columns as
 submitted and never recomputes them, so an error here is scored as if it
 were the prediction. `sim/lib/spec.py` lists the four traps.
 
+**Do not caricature the moderators.** Stage 2 hands the writer six scored
+moderators and ten unscored attributes. A memorable character is the wrong
+target. *Demographic predictability* is a Tier-1-only scored analysis: it
+fits an OLS of the outcome on one moderator plus condition fixed effects and
+compares the R² of the humans with ours. An R² above the humans' is read as
+stereotyping and counts against the entry. `party_detail` exists to make a
+person specific ("independent, close to republican"), not to make the party
+louder.
+
 **The pool is rebuilt, not copied.** Stage 1 runs
 `population/02_build_personas.py` (seed 20260807) and stops unless it
 reproduces `population/quota_report.txt` byte for byte. No persona file is
