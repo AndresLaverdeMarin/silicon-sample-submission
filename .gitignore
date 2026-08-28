@@ -4,11 +4,6 @@
 # maintainer/owner tooling — kept locally, never shipped to participating teams
 maintainer/
 
-# generation build artifacts — large and deterministic, so they are rebuilt
-# rather than deposited. The inputs (population/) and the raw model answers
-# (generation/runs/) are deposited, so both are reproducible from the deposit.
-generation/build/population/
-generation/build/draws.csv
 .dryrun/
 
 # R / Python / editor / OS cruft
@@ -19,3 +14,16 @@ generation/build/draws.csv
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
+
+# --- sim/ Tier-1 pipeline -------------------------------------------------
+# The uv environment. Rebuild it with `uv sync`.
+.venv/
+
+# The pool is REBUILT by stage 1 from population/, never committed.
+sim/out/00_pool/
+
+# Stage-3 raw generations. Large, and deposited to Zenodo separately, not to
+# git — see registration.md item K.2. The small outputs in sim/out/ ARE
+# tracked, because they are the reproducibility record.
+sim/out/*.jsonl
+sim/out/*.parquet

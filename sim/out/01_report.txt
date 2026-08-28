@@ -1,0 +1,64 @@
+==========================================================================
+STAGE 1 — PERSONA CHARACTERISTICS
+==========================================================================
+
+schema   scripts/lib/submission_spec.R
+
+CHECKS
+--------------------------------------------------------------------------
+  spec mirror        OK   6 moderators and 16 interventions agree with submission_spec.R
+  pool rebuilt       OK   02_build_personas.py reproduced population/quota_report.txt byte for byte
+  size               OK   9,000 rows, 9,000 unique profile_id
+  moderator levels   OK   6 moderators, every value is an exact schema string
+  conditions         OK   17 present, control 1,000, every intervention 500
+  age bands          OK   ages 18 to 89, every band matches its age
+
+WRITTEN
+--------------------------------------------------------------------------
+  sim/out/01_personas.csv   9,000 rows x 20 columns
+  scored moderators  gender, age_band, race, education, income, party
+  not scored         ideology, household_size, social_class, region, urbanicity, religion, religiosity, born_again, trust_science_prior
+  control fillers    {'neckties': 334, 'dances': 333, 'baseball': 333}
+
+REALISED MARGINS
+--------------------------------------------------------------------------
+  gender
+      Male                                    49.0%
+      Female                                  50.4%
+      Other                                    0.6%
+  age_band
+      18-29                                   20.0%
+      30-44                                   25.8%
+      45-59                                   23.1%
+      60+                                     31.1%
+  race
+      White / Caucasian                       59.9%
+      Black / African American                12.3%
+      Hispanic / Latino                       18.4%
+      Asian / Asian American                   6.6%
+      Other                                    2.8%
+  education
+      Less than high school                    9.4%
+      High school diploma / GED               29.1%
+      Some college or Associate's degree      25.8%
+      Bachelor's degree                       22.9%
+      Master's degree / Professional degree   11.0%
+      Doctorate degree / Ph.D.                 1.9%
+  income
+      Less than $30,000                       16.6%
+      $30,000 to $55,999                      17.5%
+      $56,000 to $99,999                      23.6%
+      $100,000 to $167,999                    20.4%
+      $168,000 or more                        21.8%
+  party
+      Republican                              24.4%
+      Democrat                                32.7%
+      Independent                             39.7%
+      Other                                    3.2%
+
+NEXT
+--------------------------------------------------------------------------
+  Stage 2 writes a persona description for each row.
+  Stage 3 asks Qwen3.8-27B the 44 items for each row.
+
+==========================================================================
