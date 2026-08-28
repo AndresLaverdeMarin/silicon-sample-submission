@@ -131,42 +131,26 @@ people, so its sampling noise is large. Every other cell is inside 0.61 pts.
 
 ## Comments
 
-The benchmark ships no participant pool and does not say how to build one —
-registration item D.1 asks only that we report what we did. So each of these
-is our choice, with the reason.
+The benchmark ships no pool and does not say how to build one. Each item below
+is a choice we made, with the reason.
 
-1. **Party comes from the GSS.** The Census collects no party ID, and the
-   benchmark quotas only age and race, so the GSS is the only national source.
-   Party is never drawn: it arrives attached to a real person, so its joint
-   with every other attribute is the GSS joint — stage 1 measures that gap at
-   a median of 1 to 2 percentage points. The human party mix was never
-   quota-enforced and stays sealed, but it matters less than it looks:
-   submissions are never reweighted, and the ATEs are differences from the
-   shared control, so a compositional skew cancels. It reaches only the
-   control-condition distribution metrics, which are Tier 1 only.
+1. **Party comes from the GSS.** The Census collects no party ID, so the GSS
+   is the only national source. We never draw party: it comes attached to a
+   real person, so its joints stay real. Stage 1 reports the gap.
 
 2. **Two coarse GSS variables are split with Census shares.** `degree` and
-   `income16` are coarser than the study's categories, so Census conditional
-   shares split them. The margin is then right, and the assignment inside
-   those two categories is probabilistic.
+   `income16` are wider than the study's categories. The split makes the
+   margin right; inside those two categories the assignment is probabilistic.
 
 3. **Quota sampling runs inside each arm, not across the pool.** That is what
-   randomisation does in the real study, and it stops demographic composition
-   from confounding a treatment effect. Gender, age and race then differ
-   between arms by under 1 point; the attributes that are not quota-sampled
-   float by 6 to 8, as they would under real randomisation.
+   randomisation does in the real study, and it stops composition from
+   confounding an effect. Gender, age and race then differ by under 1 point
+   between arms; the rest float by 6 to 8.
 
-4. **The 9,000 people were picked by the organizers, not by us.** The four
-   GSS waves hold more respondents than we need, so somebody had to choose
-   which 9,000 to use and how to balance four years of different sizes. The
-   organizers made that choice for their own earlier simulation and published
-   the file; we copied it. That is allowed — the FAQ names GSS as a source —
-   but two natural sentences would be untrue: we did not draw this pool, and
-   the benchmark did not supply it, because it supplies no people at all.
-   Registration items D.1 and I.2 say we reused their selection. Two things
-   come with it: our population is the same one behind their own reference
-   run, and their weights are renormalized so each wave counts equally, which
-   is why `wtssps` is not the raw GSS weight.
+4. **The organizers picked the 9,000 people, not us.** They chose them for
+   their own earlier simulation and published the file, and we reused it.
+   Registration D.1 and I.2 must say so: we did not draw this pool, and the
+   benchmark supplies none.
 
 ## Where the code runs
 
