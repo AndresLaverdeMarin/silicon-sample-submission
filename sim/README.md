@@ -92,5 +92,3 @@ were the prediction. `sim/lib/spec.py` lists the four traps.
 `population/02_build_personas.py` (seed 20260807) and stops unless it
 reproduces `population/quota_report.txt` byte for byte. No persona file is
 committed, and the population step is reproducible from `population/` alone.
-
-**Written in ASD-STE100 Simplified Technical English.**
