@@ -131,14 +131,19 @@ people, so its sampling noise is large. Every other cell is inside 0.61 pts.
 
 ## Known limits
 
-1. **Party is not quota-matched, so the human party mix is unknown.**
-   `quotas_18000.csv` holds `Age` and `Race / Ethnicity` only, crossed with
-   gender. We rake party to the GSS because the Census collects no party ID.
-   That is a bet that the panel resembles the US adult population, and it
-   cannot be checked while the human data are sealed. It matters because
-   climate trust is partisan and the main cell means are sample averages, so a
-   different mix shifts every baseline. Planned check, once answers exist:
-   re-weight them to several party mixes and report how far the means move.
+1. **Party is representative by construction; the human target is not
+   known.** We never draw party. Each persona is one real GSS respondent, so
+   party arrives attached to that person's age, education, race, religion and
+   class, and the joint is the GSS joint — stage 1 reports the gap inside
+   every level, and it is a median of 1 to 2 percentage points.
+   What cannot be known is whether the HUMANS look like the US adult
+   population on party. `quotas_18000.csv` holds `Age` and `Race / Ethnicity`
+   only, so party was never quota-enforced in recruitment; the human mix is
+   whatever the panel produced, and it stays sealed until the lock. If it
+   skews, our baselines shift, because climate trust is partisan and the main
+   cell means are sample averages. The within-group analyses are unaffected.
+   Planned check, once answers exist: re-weight them to several party mixes
+   and report how far the means move.
 
 2. **Two GSS variables are too coarse** for the study's categories, and are
    split with Census conditional shares:

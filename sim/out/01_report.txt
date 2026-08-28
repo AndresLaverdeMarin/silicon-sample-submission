@@ -56,6 +56,20 @@ REALISED MARGINS
       Independent                             39.7%
       Other                                    3.2%
 
+PARTY KEEPS ITS GSS JOINT
+--------------------------------------------------------------------------
+Party is never drawn. It arrives attached to a real person, so
+its joint with every other attribute is the GSS joint.
+
+  attribute      levels   median gap   max gap   small levels
+  age_band            4          1.3       5.2              0
+  ideology            7          1.4       5.5              0
+  religion           13          2.3      39.2             10
+  social_class        4          1.8       4.5              0
+  Gaps are percentage points, party share inside one level,
+  our 9,000 against the GSS weighted by `wtssps`. A level with
+  fewer than 200 people moves on sampling noise alone.
+
 NEXT
 --------------------------------------------------------------------------
   Stage 2 writes a persona description for each row.

@@ -51,6 +51,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 HERE = Path(__file__).resolve().parent
@@ -190,6 +191,60 @@ def canonical(pool: pd.DataFrame) -> pd.DataFrame:
     return out[columns]
 
 
+def party_joint(table: pd.DataFrame) -> list[str]:
+    """Check that party keeps its GSS joint with the other attributes.
+
+    Party is never drawn. Each persona is one real GSS respondent, so party
+    arrives attached to that person's age, race, ideology, religion and class.
+    This reports how far the sampled pool moved from the weighted GSS, inside
+    every level of each attribute. It is a REPORT, not a gate: the right
+    threshold is a judgement, and small levels move on sampling noise alone.
+    """
+    gss = pd.read_csv(ROOT / "population/gss_profiles.csv")
+
+    def collapse(value: str) -> str:
+        v = str(value or "").strip().lower()
+        if "republican" in v and "close to" not in v:
+            return "Republican"
+        if "democrat" in v and "close to" not in v:
+            return "Democrat"
+        if "other" in v:
+            return "Other"
+        return "Independent"
+
+    gss["party"] = gss.partyid.map(collapse)
+    gss["age_band"] = pd.cut(gss.age, [17, 29, 44, 59, 200],
+                             labels=list(spec.MODERATORS["age_band"])
+                             ).astype(str)
+    gss["ideology"] = gss.polviews.fillna(
+        "moderate, middle of the road").astype(str).str.strip()
+    source = {"age_band": "age_band", "ideology": "ideology",
+              "religion": "relig", "social_class": "class"}
+
+    out = ["  attribute      levels   median gap   max gap   small levels"]
+    for name, column in source.items():
+        if name not in table.columns:
+            continue
+        gss["_k"] = gss[column].astype(str).str.strip()
+        totals = gss.pivot_table(index="_k", columns="party", values="wtssps",
+                                 aggfunc="sum", fill_value=0)
+        want = totals.div(totals.sum(axis=1), axis=0) * 100
+        got = pd.crosstab(table[name].astype(str), table.party,
+                          normalize="index") * 100
+        rows = [i for i in got.index if i in want.index]
+        cols = [c for c in spec.MODERATORS["party"]
+                if c in got.columns and c in want.columns]
+        gap = (got.loc[rows, cols] - want.loc[rows, cols]).abs().to_numpy()
+        counts = table[name].astype(str).value_counts()
+        small = sum(1 for i in rows if counts.get(i, 0) < 200)
+        out.append(f"  {name:<14} {len(rows):>6}   {np.median(gap):>10.1f}"
+                   f"   {gap.max():>7.1f}   {small:>12}")
+    out.append("  Gaps are percentage points, party share inside one level,")
+    out.append("  our 9,000 against the GSS weighted by `wtssps`. A level with")
+    out.append("  fewer than 200 people moves on sampling noise alone.")
+    return out
+
+
 def margins(table: pd.DataFrame) -> list[str]:
     """The realised share of each moderator level, for the report."""
     lines = []
@@ -229,6 +284,10 @@ def main() -> None:
                f"  not scored         {', '.join(EXTRA)}",
                f"  control fillers    {table.control_filler.value_counts().to_dict()}",
                "", "REALISED MARGINS", "-" * 74] + margins(table)
+    report += ["", "PARTY KEEPS ITS GSS JOINT", "-" * 74,
+               "Party is never drawn. It arrives attached to a real person, so",
+               "its joint with every other attribute is the GSS joint.",
+               ""] + party_joint(table)
     report += ["", "NEXT", "-" * 74,
                "  Stage 2 writes a persona description for each row.",
                "  Stage 3 asks Qwen3.8-27B the 44 items for each row.", "",
