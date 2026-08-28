@@ -20,10 +20,15 @@ from __future__ import annotations
 import random
 import re
 
+# The fact list ALREADY carries two attitudes, and both are real GSS
+# measurements: `polviews` and `consci`. So the writer must be free to state a
+# view it is given. What it may not do is make one up. An invented view lets
+# stage 3 read its answer off the persona instead of simulating a person, and
+# that inflates the R2 the Tier-1 stereotyping check measures.
 SYSTEM = ("You write short, plain descriptions of one person. You use ONLY "
           "the facts you are given. You never invent a fact, a name, a job, "
-          "an opinion or an event. You never say what the person thinks "
-          "about any topic.")
+          "an opinion or an event. Views the facts state are yours to write; "
+          "views they do not state are not.")
 
 VOICE_RULE = {
     "second_person": 'Write in the second person. Refer to the person as "You".',
@@ -40,9 +45,9 @@ Rules:
 - {voice_rule}
 - Use every fact. Add nothing.
 - Never write "survey", "study" or "research".
-- Do not give the person a name, a job, a hobby, or an opinion.
-- Do not say what the person believes about climate, science or politics
-  beyond the facts above.
+- Do not give the person a name, a job or a hobby.
+- Write the views the facts give. Do not add any view they do not give, and
+  do not say how the person would answer a question.
 - Do not add a closing sentence about the person's background or diversity.
 
 Write only the description."""
