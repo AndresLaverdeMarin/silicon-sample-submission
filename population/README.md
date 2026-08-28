@@ -12,7 +12,7 @@ for the numbers the pipeline enforces.
 
 | File | What it is |
 |---|---|
-| `gss_profiles.csv` | The base pool. 9,000 GSS respondents. See below. |
+| `gss_profiles.csv` | The base pool. 9,000 GSS respondents. See *Sources*. |
 | `quotas_18000.csv` | The quota target, as published in the preregistration. |
 | `census_quota_targets.json` | The target the raking uses. Gender, age band, race and the two cross-quotas come from `quotas_18000.csv`; education and income come from Census CPS 2024. |
 | `01c_quotas_18000.py` | Recovers the target from the preregistration page. See "The quota source" below. |
@@ -29,6 +29,18 @@ respondents with their post-stratification weights (`wtssps`). The pool is
 | GSS waves | **2018 (1,867), 2021 (2,687), 2022 (2,214), 2024 (2,232)** |
 | Weight column | `wtssps` |
 | Columns | GSS variable names: `age`, `sex`, `racecen1`, `hispanic`, `degree`, `income16`, `hompop`, `class`, `region`, `srcbelt`, `partyid`, `polviews`, `relig`, `reborn`, `reliten`, `consci` |
+
+## Sources
+
+Every input, with its official reference. `census_quota_targets.json` records
+the same provenance in machine-readable form.
+
+| Input | Used for | Official source |
+|---|---|---|
+| General Social Survey (GSS), waves 2018, 2021, 2022, 2024 | the base pool of 9,000 real respondents, their post-stratification weights (`wtssps`) and the joint structure of every attribute | NORC at the University of Chicago — <https://gss.norc.org/> |
+| Benchmark preregistration, Table 3 (N = 18,000) | the quota target for gender, age band, race, and the gender x age and gender x race cross-quotas | <https://janpfander.github.io/llm_predictions_megastudy/preregistration.html> |
+| US Census Bureau, CPS 2024, Educational Attainment, Table 1, 18+ | the education margin | Current Population Survey detailed tables — <https://www.census.gov/topics/education/educational-attainment.html> |
+| US Census Bureau, P60-286, *Income in the United States: 2024*, Table A-2 | the income margin | <https://www.census.gov/library/publications/2025/demo/p60-286.html> |
 
 **Where this pool comes from. Read this before you cite it.**
 
@@ -56,37 +68,6 @@ benchmark shipped it.
 The weights are close to 1 in each wave (means 1.02 to 1.15), which matches the
 within-year normalisation the quotation describes. They are not raw GSS weights.
 
-**Why not draw each variable on its own?** Independent draws make people who do
-not exist, such as a 19-year-old with a doctorate. They also make the moderator
-variables independent, which they are not in real life. That would give the
-simulation an easy and false signal.
-
-So the GSS gives the **joint** structure (education x income x party x religion
-x region x class). Iterative proportional fitting (raking) then moves it onto
-the quota **margins**.
-
-**Conditions are quota-sampled one arm at a time.** Every arm is balanced to the
-same quotas on its own. This is what randomisation does in the real study. It
-stops demographic composition from confounding the treatment effects.
-
-## Sources
-
-Every input, with its official reference. `census_quota_targets.json` records
-the same provenance in machine-readable form.
-
-| Input | Used for | Official source |
-|---|---|---|
-| General Social Survey (GSS), waves 2018, 2021, 2022, 2024 | the base pool of 9,000 real respondents, their post-stratification weights (`wtssps`) and the joint structure of every attribute | NORC at the University of Chicago — <https://gss.norc.org/> |
-| Benchmark preregistration, Table 3 (N = 18,000) | the quota target for gender, age band, race, and the gender x age and gender x race cross-quotas | <https://janpfander.github.io/llm_predictions_megastudy/preregistration.html> |
-| US Census Bureau, CPS 2024, Educational Attainment, Table 1, 18+ | the education margin | Current Population Survey detailed tables — <https://www.census.gov/topics/education/educational-attainment.html> |
-| US Census Bureau, P60-286, *Income in the United States: 2024*, Table A-2 | the income margin | <https://www.census.gov/library/publications/2025/demo/p60-286.html> |
-
-**The GSS file itself is not ours and is not a benchmark resource.** It is the
-organizers' own v1 clone pool, `clone_profiles/profiles.csv` from
-<https://github.com/janpfander/llm_predictions_megastudy>. Read "Where this
-pool comes from" above before citing it, and declare it in registration item
-D.1.
-
 ## How the data is modified
 
 The GSS pool is not used as it stands. Four changes, in order:
@@ -94,10 +75,18 @@ The GSS pool is not used as it stands. Four changes, in order:
 1. **Recode to the study's categories.** GSS variable names and codes become
    the exact level strings of `scripts/lib/submission_spec.R`. Two GSS
    variables are coarser than the study needs and are split with Census
-   conditional shares — see *Known limits* 2.
+   conditional shares — see *Known limits* 2. Party goes the other way: the
+   megastudy asks the GSS root question word for word but never asks the
+   follow-up that splits Independents into leaners, so the GSS 7-point value
+   collapses to the study's 4 options and reproduces its instrument. The raw
+   value stays in `party_detail` for the persona writer, and never reaches the
+   submission.
 2. **Rake the weights.** Iterative proportional fitting moves the GSS
    post-stratification weights onto the quota margins above. The joint
-   structure of the pool is kept; only the weights move.
+   structure of the pool is kept; only the weights move. Real microdata
+   supplies that joint structure because drawing each variable on its own
+   makes people who do not exist, such as a 19-year-old with a doctorate, and
+   makes the six moderators independent, which they are not.
 3. **Quota-sample 9,000 personas** from the raked pool, taking the gender x
    age and gender x race cross-quotas **independently inside each of the 17
    conditions**. This is what randomisation does in the real study, and it
@@ -142,42 +131,14 @@ people, so its sampling noise is large. Every other cell is inside 0.61 pts.
 
 ## Known limits
 
-1. **The human party mix is unknown, and party is not quota-matched.**
-   `quotas_18000.csv` holds two variables, `Age` and `Race / Ethnicity`,
-   crossed with gender. Party is not in it, so the human sample's party mix is
-   whatever recruitment produced. We rake to the GSS because the Census
-   collects no party ID and the GSS is the only national source. That is a
-   bet that the panel resembles the US adult population on party, and it
-   cannot be checked while the human data are sealed.
-   **It matters because trust in climate scientists is strongly partisan.**
-   The Tier-1 and Tier-2 *main* cell means are averages over our sample, so a
-   different party mix shifts every control mean and every ATE baseline, even
-   when the within-party answers are right. The within-group analyses are
-   insulated: interactions and the parity gap are computed inside each party
-   level, where a wrong marginal costs precision and not bias.
-   *Planned check, after the answers exist:* re-weight the 9,000 answers to
-   several plausible party mixes and report how far the cell means move.
-
-   **The 7-point to 4-option collapse is NOT a limit.** The megastudy asks
-   the GSS root question word for word — *"Generally speaking, do you usually
-   think of yourself as a Republican, a Democrat, an Independent, or what?"*
-   The GSS then asks a follow-up that splits Independents into leaners; the
-   megastudy never asks it. So collapsing 7 to 4 reproduces the megastudy's
-   own instrument. 1,893 of our 3,571 Independents (53 %) are GSS leaners,
-   and the megastudy's question hides them in the same way.
-   `party_detail` carries the raw 7-point value for the persona writer. It
-   never reaches the submission: `party` is the scored column.
-
-   **Party carries three scored analyses**, on the four illustrative outcomes
-   the preregistration names (multidimensional trust, donation to AMS,
-   funding perceptions, general policy support) — not on all 13:
-   - condition x moderator interactions (Tiers 1-2);
-   - the demographic parity gap, whose worked example in
-     `preregistration_benchmark.qmd` is Republicans against Democrats;
-   - **demographic predictability, Tier 1 only** — an OLS R² of the outcome
-     on party plus condition fixed effects, compared between humans and us.
-     An R² higher than the humans' flags stereotyping. A persona written
-     from a vivid party label is exactly what inflates it.
+1. **Party is not quota-matched, so the human party mix is unknown.**
+   `quotas_18000.csv` holds `Age` and `Race / Ethnicity` only, crossed with
+   gender. We rake party to the GSS because the Census collects no party ID.
+   That is a bet that the panel resembles the US adult population, and it
+   cannot be checked while the human data are sealed. It matters because
+   climate trust is partisan and the main cell means are sample averages, so a
+   different mix shifts every baseline. Planned check, once answers exist:
+   re-weight them to several party mixes and report how far the means move.
 
 2. **Two GSS variables are too coarse** for the study's categories, and are
    split with Census conditional shares:
