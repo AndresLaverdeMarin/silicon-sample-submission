@@ -37,7 +37,9 @@ Run it from the repository root, in a vLLM environment:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import os
 import random
 import sys
 import time
@@ -46,6 +48,9 @@ from pathlib import Path
 
 import pandas as pd
 
+os.environ.setdefault("HF_HUB_OFFLINE", "1")
+os.environ.setdefault("VLLM_LOGGING_LEVEL", "WARNING")
+
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from lib import answer_prompt as ap                             # noqa: E402
@@ -53,9 +58,33 @@ from lib import spec                                            # noqa: E402
 
 OUT = HERE / "out"
 MODEL = "Qwen/Qwen3.8-27B"
+
+# Per-model engine settings, ported from the sibling modelbench project.
+# **`gdn_prefill_backend: triton` is not optional for Qwen3.8-27B.** Without
+# it vLLM picks a prefill kernel it must compile with `nvcc`, which is not on
+# this machine, and the engine dies with
+#   RuntimeError: Could not find nvcc and default cuda_home='/usr/local/cuda'
+# `limit_mm_per_prompt` turns off the vision and audio towers we never use.
+ENGINE_OVERRIDES: dict[str, dict] = {
+    "Qwen/Qwen3.8-27B": {"limit_mm_per_prompt": {"image": 0, "audio": 0},
+                         "additional_config":
+                             {"gdn_prefill_backend": "triton"}},
+    "google/gemma-4-26B-A4B-it": {"limit_mm_per_prompt": {"image": 0,
+                                                          "audio": 0}},
+    "google/gemma-4-E4B-it": {"limit_mm_per_prompt": {"image": 0,
+                                                      "audio": 0}},
+    "google/gemma-3-27b-it": {"limit_mm_per_prompt": {"image": 0}},
+}
 SEED = 20260828
 TEMPERATURE = 1.0          # the spread between respondents is the deliverable
-MAX_TOKENS = 8
+TOP_P = 0.95
+# **Not 8.** The answer is normally about 3 tokens, but the model sometimes
+# opens with "Based on the information provided, I ..." and reaches the number
+# after it. A tight budget truncates before the number arrives and scores a
+# good answer as a parse failure. `stop=["\'"]` ends a clean answer at once,
+# so a generous budget costs nothing: modelbench measures ~4 output tokens per
+# generation with a 256 budget.
+MAX_TOKENS = 64
 
 
 def stimulus_for(row, materials: dict) -> str:
@@ -106,6 +135,8 @@ def main() -> None:
                           "sim/out/02_persona_text.csv")
     ap_.add_argument("--tag", help="name the output files")
     ap_.add_argument("--seed", type=int, default=SEED)
+    ap_.add_argument("--retry-rounds", type=int, default=3,
+                     help="re-ask cells that did not parse (default 3)")
     ap_.add_argument("--max-model-len", type=int, default=4096)
     args = ap_.parse_args()
 
@@ -135,19 +166,69 @@ def main() -> None:
               for i in items}
 
     from vllm import LLM, SamplingParams
-    engine = LLM(model=args.model, max_model_len=args.max_model_len,
-                 gpu_memory_utilization=0.85, seed=args.seed)
-    params = SamplingParams(temperature=TEMPERATURE, max_tokens=MAX_TOKENS,
-                            stop=["'"], seed=args.seed, n=1)
+    settings = dict(model=args.model, dtype="bfloat16",
+                    max_model_len=args.max_model_len,
+                    gpu_memory_utilization=0.85, seed=args.seed,
+                    # The 44 items of one respondent share a long prefix: the
+                    # condition text and the persona. Prefix caching computes
+                    # it one time for each respondent instead of 44 times.
+                    enable_prefix_caching=True, trust_remote_code=True)
+    settings.update(ENGINE_OVERRIDES.get(args.model, {}))
+    engine = LLM(**settings)
+    # **One seed for each request, never one for the batch.** A single seed
+    # shared by every request makes every respondent draw from the same RNG
+    # stream, and at temperature 1.0 with a peaked distribution they all
+    # return the SAME number. That is a degenerate panel: the Tier-1
+    # distribution metrics measure exactly the spread it destroys. The seed is
+    # derived from the respondent and the item, so the run stays reproducible.
+    params = [SamplingParams(temperature=TEMPERATURE, top_p=TOP_P,
+                             max_tokens=MAX_TOKENS, stop=["'"], n=1,
+                             seed=int(hashlib.blake2b(
+                                 f"{args.seed}:{r.profile_id}:{r.item}".encode(),
+                                 digest_size=4).hexdigest(), 16))
+              for r in grid.itertuples()]
 
     started, clock = datetime.now(timezone.utc).isoformat(), time.time()
     outputs = engine.generate(list(grid.prompt), params)
+    grid["raw"] = [o.outputs[0].text for o in outputs]
+    grid["value"] = pd.Series([ap.parse(r, scales[i]) for r, i in
+                               zip(grid.raw, grid.item)],
+                              index=grid.index, dtype="float64")
+    first_pass = float(grid.value.notna().mean())
+
+    # **Retry every cell that did not parse.** Tier 1 asks one answer per
+    # person per item, so there is no second sample to fall back on and an
+    # unparsed answer is a missing value in the submission. `make check`
+    # FAILS on any NA in a prediction column. Each round re-asks only the
+    # failures, with a new seed, and keeps whatever now parses.
+    rounds = []
+    for round_no in range(1, args.retry_rounds + 1):
+        todo = grid[grid.value.isna()]
+        if todo.empty:
+            break
+        retry_params = [
+            SamplingParams(temperature=TEMPERATURE, top_p=TOP_P,
+                           max_tokens=MAX_TOKENS, stop=["'"], n=1,
+                           seed=int(hashlib.blake2b(
+                               f"{args.seed}:{round_no}:{r.profile_id}:"
+                               f"{r.item}".encode(),
+                               digest_size=4).hexdigest(), 16))
+            for r in todo.itertuples()]
+        again = engine.generate(list(todo.prompt), retry_params)
+        raw = [o.outputs[0].text for o in again]
+        got = [ap.parse(t, scales[i]) for t, i in zip(raw, todo.item)]
+        # `got` mixes floats and None. Assigning the bare list into a float
+        # column raises LossySetitemError, so build a typed Series first.
+        grid.loc[todo.index, "raw"] = pd.Series(raw, index=todo.index,
+                                                dtype="object")
+        grid.loc[todo.index, "value"] = pd.Series(got, index=todo.index,
+                                                  dtype="float64")
+        kept = sum(v is not None for v in got)
+        rounds.append({"round": round_no, "attempted": len(todo),
+                       "recovered": kept})
+        print(f"retry {round_no}: {len(todo):,} attempted, {kept:,} recovered")
     elapsed = time.time() - clock
     ended = datetime.now(timezone.utc).isoformat()
-
-    grid["raw"] = [o.outputs[0].text for o in outputs]
-    grid["value"] = [ap.parse(r, scales[i]) for r, i in
-                     zip(grid.raw, grid.item)]
 
     tag = args.tag or "03_replies"
     with (OUT / f"{tag}.jsonl").open("w") as f:
@@ -169,7 +250,14 @@ def main() -> None:
         f"over {personas.condition.nunique()} condition(s)",
         f"items          {len(items)}",
         f"generations    {len(grid):,}",
-        f"parsed         {ok:,}  ({100 * ok / len(grid):.1f}%)",
+        f"parsed, first  {100 * first_pass:.1f}%",
+        f"parsed, final  {ok:,}  ({100 * ok / len(grid):.1f}%)",
+        ("  retries       " + ",  ".join(
+            f"round {r['round']}: {r['recovered']:,}/{r['attempted']:,}"
+            for r in rounds)) if rounds else "  retries        none needed",
+        (f"  !! {len(grid) - ok:,} CELLS STILL EMPTY — make check FAILS on an "
+         f"NA in a prediction column" if ok < len(grid) else
+         "  every cell has a value"),
         f"wall clock     {elapsed / 60:.1f} min  "
         f"({len(grid) / elapsed:.1f} generations/s)", "",
         f"wrote sim/out/{tag}.jsonl", "", "=" * 74, ""])

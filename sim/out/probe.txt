@@ -1,0 +1,21 @@
+==========================================================================
+STAGE 3 — REPLIES
+==========================================================================
+
+model          Qwen/Qwen3.8-27B
+persona style  template
+sampling       temperature 1.0, one answer per item, seed 20260828
+call window    2026-08-28T22:53:25.795725+00:00  to  2026-08-28T22:55:57.430231+00:00
+
+respondents    60 over 1 condition(s)
+items          44
+generations    2,640
+parsed, first  95.6%
+parsed, final  2,640  (100.0%)
+  retries       round 1: 107/115,  round 2: 6/8,  round 3: 2/2
+  every cell has a value
+wall clock     2.5 min  (17.4 generations/s)
+
+wrote sim/out/probe.jsonl
+
+==========================================================================

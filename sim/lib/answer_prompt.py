@@ -59,7 +59,11 @@ def template_persona(row) -> str:
 
 
 # ------------------------------------------------------------------ items --
-ANCHOR = re.compile(r"0\s*=\s*(.+?)\s*(?:…|\.\.\.|…)\s*100\s*=\s*(.+?)$")
+# Response options name their anchors as "N = label", separated by an
+# ellipsis or a comma. Most items label 0 and 100 only. `funding_5` also
+# labels its MIDPOINT — "0 = far too little, 50 = about right, 100 = far too
+# much" — and the midpoint is part of the instrument, so it is kept.
+ANCHOR = re.compile(r"(\d+)\s*=\s*([^,…]+?)(?=\s*(?:,|…|\.\.\.|$))")
 
 
 def scale_of(item: str, options: str) -> dict:
@@ -70,14 +74,20 @@ def scale_of(item: str, options: str) -> dict:
     if item == "newsletter":
         return {"kind": "binary", "low": 0, "high": 1,
                 "ask": "Please answer 1 for yes or 0 for no"}
-    match = ANCHOR.search(options.replace("…", "…"))
-    if not match:
+
+    pairs = [(int(n), label.strip()) for n, label in ANCHOR.findall(options)]
+    pairs = sorted({n: label for n, label in pairs}.items())
+    if len(pairs) < 2 or pairs[0][0] != 0 or pairs[-1][0] != 100:
         raise SystemExit(f"cannot read a 0-100 scale for {item!r} from "
                          f"{options!r}")
-    low, high = match.group(1).strip(), match.group(2).strip()
+    low, high = pairs[0][1], pairs[-1][1]
+    ask = f"Please choose a number from 0 ({low}) to 100 ({high})"
+    for n, label in pairs[1:-1]:                 # a labelled midpoint
+        ask += f", where {n} is {label}"
     return {"kind": "slider", "low": 0, "high": 100, "low_label": low,
             "high_label": high,
-            "ask": f"Please choose a number from 0 ({low}) to 100 ({high})"}
+            "mid": {n: label for n, label in pairs[1:-1]} or None,
+            "ask": ask}
 
 
 def build_prompt(persona: str, stimulus: str, question: str,
