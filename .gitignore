@@ -27,3 +27,6 @@ sim/out/00_pool/
 # tracked, because they are the reproducibility record.
 sim/out/*.jsonl
 sim/out/*.parquet
+
+# Smoke-test outputs (--limit). Superseded by the full run.
+sim/out/*_smoke.*
