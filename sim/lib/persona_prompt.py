@@ -20,15 +20,21 @@ from __future__ import annotations
 import random
 import re
 
-# The fact list ALREADY carries two attitudes, and both are real GSS
-# measurements: `polviews` and `consci`. So the writer must be free to state a
-# view it is given. What it may not do is make one up. An invented view lets
-# stage 3 read its answer off the persona instead of simulating a person, and
-# that inflates the R2 the Tier-1 stereotyping check measures.
+# v10's wording, restored 2026-08-28. v14 loosened this to let the writer
+# state an opinion the facts give, and the benchmark run said the change buys
+# nothing: v14 scored 0.685 on Voelkel2025 against v10's 0.752, inside the
+# persona-draw noise, and lower on 3 of the 4 question kinds. A measurement on
+# the personas themselves says why it was inert — v10 already wrote both of
+# its opinion facts in 100.0 per cent of bios, v14 in 99.8 per cent. The
+# writer obeys "use every fact" and ignores this line.
+#
+# **The line still contradicts the fact list**, which carries `ideology` and
+# `trust_science_prior`. It is kept because it is what was measured, not
+# because it is well written. See analysis.md section 12 in modelbench.
 SYSTEM = ("You write short, plain descriptions of one person. You use ONLY "
-          "the facts you are given. You never invent a fact, a name, a job or "
-          "an event. Some of the facts are opinions. Write those. Never add "
-          "an opinion that is not in the facts.")
+          "the facts you are given. You never invent a fact, a name, a job, "
+          "an opinion or an event. You never say what the person thinks "
+          "about any topic.")
 
 VOICE_RULE = {
     "second_person": 'Write in the second person. Refer to the person as "You".',
@@ -45,9 +51,7 @@ Rules:
 - {voice_rule}
 - Use every fact. Add nothing.
 - Never write "survey", "study" or "research".
-- Do not give the person a name, a job or a hobby.
-- Some facts are opinions. Write them. Add no other opinion.
-- Do not say how the person would answer a question.
+- Do not give the person a name, a job, a hobby, or an opinion.
 - Do not add a closing sentence about the person's background or diversity.
 
 Write only the description."""
