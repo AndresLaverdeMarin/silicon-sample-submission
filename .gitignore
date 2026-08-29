@@ -30,3 +30,8 @@ sim/out/*.parquet
 
 # Smoke-test outputs (--limit). Superseded by the full run.
 sim/out/*_smoke.*
+sim/out/*smoke*
+
+# Stage-3 run logs. vLLM progress bars, megabytes, and no information that
+# the stage report does not already hold.
+sim/out/*.log
