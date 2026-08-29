@@ -1,19 +1,24 @@
 {
   "team_id": "team_27",
-  "team_name": "TODO \u2014 replace before deposit",
-  "contact": "TODO \u2014 replace before deposit",
+  "team_name": "team_27",
+  "contact": "andreslaverdemarin@gmail.com",
   "creators": [
     {
-      "name": "TODO, Firstname",
-      "affiliation": "TODO",
-      "orcid": ""
+      "name": "Laverde Marin, Andres",
+      "affiliation": "Joint Research Centre, European Commission",
+      "orcid": "0000-0002-9578-4412"
+    },
+    {
+      "name": "De Marzo, Giordano",
+      "affiliation": "University of Konstanz",
+      "orcid": "0000-0002-3127-5336"
     }
   ],
-  "abstract": "Tier-1 individual-level predictions for the Silicon Sample Benchmark. A synthetic panel of 9,000 respondents is built by raking the post-stratification weights of 9,000 General Social Survey respondents onto the preregistered quota margins, then quota-sampling within each of the 17 conditions, so demographic composition is not a confound of the treatment effects. Each respondent is assigned one condition (500 per intervention, 1,000 in control, one of the three filler texts for each control respondent), is written as a short prose persona, and then answers all 44 raw survey items one item at a time with local open weights. The 6 composite outcomes are built by the benchmark's own scripts/clean.R from the raw items, never in our code. No human outcome data from this study, or from any pilot of it, informed any part of the pipeline.",
+  "abstract": "Tier-1 individual-level predictions for the Silicon Sample Benchmark. A synthetic panel of 9,000 respondents is built by raking the post-stratification weights of 9,000 General Social Survey respondents onto the preregistered quota margins, then quota-sampling within each of the 17 conditions, so demographic composition is not a confound of the treatment effects. Each respondent is assigned one condition (500 per intervention, 1,000 in control, one of the three filler texts for each control respondent), is rendered as a fixed-template persona sentence built in code, with no second model, and then answers all 44 raw survey items one item at a time with local open weights. The 6 composite outcomes are built by the benchmark's own scripts/clean.R from the raw items, never in our code. No human outcome data from this study, or from any pilot of it, informed any part of the pipeline.",
   "license": "CC-BY-4.0",
   "tier": 1,
   "entry": "primary",
-  "approach_family": "per-respondent simulation; GSS-based quota-matched synthetic panel of 9,000; one local open-weights model answers each of the 44 survey items for each respondent; item-level prompting, composites computed by the benchmark's own scripts/clean.R; zero-shot",
+  "approach_family": "per-respondent simulation; GSS-based quota-matched synthetic panel of 9,000; fixed-template persona rendering, no persona-writing model; one local open-weights model answers each of the 44 survey items for each respondent; item-level prompting, composites computed by the benchmark's own scripts/clean.R; zero-shot",
   "models": [
     "Qwen/Qwen3.8-27B"
   ],
@@ -24,8 +29,8 @@
   "zenodo_doi": null,
   "prediction_files": [
     {
-      "file": "predictions/example_T1_primary_v1.csv",
-      "sha256": "0f24e117fcf6803743a12ab43f42bf8b0a7893fb9a706e5303cae3eadb79cc59"
+      "file": "predictions/team_27_T1_primary_v1.csv",
+      "sha256": "80b69c861f7af3d5185d6887276fb1960f090f830dedb53b4e9e85f334754033"
     }
   ],
   "coverage": {
