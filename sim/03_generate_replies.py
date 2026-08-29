@@ -87,37 +87,97 @@ TOP_P = 0.95
 MAX_TOKENS = 64
 
 
-def stimulus_for(row, materials: dict) -> str:
-    """The text this respondent reads. Control reads one of three fillers."""
+# The Census calls it "District of Columbia". `questionnaire.txt` calls it
+# "Washington D.C." in its own state list. Use the study's name in the prompt.
+STATE_ALIAS = {"District of Columbia": "Washington D.C."}
+STATE_POP = Path(__file__).resolve().parent.parent / \
+    "population/state_adult_pop_2024.csv"
+
+
+def draw_state(profile_id: str, region: str, states: pd.DataFrame,
+               seed: int) -> str:
+    """Give this respondent a home state, inside their own Census region.
+
+    The draw is weighted by the adult population of each state, so the states
+    come up as often as real adults of that region live in them. It is
+    derived from the `profile_id`, so the same person always gets the same
+    state and the run repeats exactly.
+    """
+    pool = states[states.region == region].sort_values("state")
+    if pool.empty:
+        return ""
+    weight = pool.adults_18plus.to_numpy(dtype="float64")
+    cut = weight.cumsum() / weight.sum()
+    draw = int(hashlib.blake2b(f"{seed}:state:{profile_id}".encode(),
+                               digest_size=8).hexdigest(), 16) % 10**12 / 1e12
+    name = str(pool.state.to_numpy()[int((cut <= draw).sum())])
+    return STATE_ALIAS.get(name, name)
+
+
+def stimulus_for(row, materials: dict, states: pd.DataFrame,
+                 seed: int) -> tuple[str, str]:
+    """The text this respondent reads, and their state if the arm needs one.
+
+    Control reads one of three fillers. Fifteen arms read one fixed text.
+
+    The `Extreme weather predictions` arm is state-adaptive: the participant
+    reports a state, reads one intro that names that state and its risk
+    category, and then reads ONE of four texts. This builds that page. A
+    respondent with no region gets the study's own fallback: the generic
+    intro and case 4, which is what a real participant who answers "Prefer
+    not to say" is shown.
+    """
+    cond = materials["conditions"][row.condition]
     if row.condition == "control":
-        return materials["conditions"]["control"]["fillers"][row.control_filler]
-    return materials["conditions"][row.condition]["text"]
+        return cond["fillers"][row.control_filler], ""
+    if not cond.get("state_adaptive"):
+        return cond["text"], ""
+
+    state = draw_state(row.profile_id, getattr(row, "region", ""), states,
+                       seed)
+    if not state:
+        return f"{cond['intro_generic']}\n\n{cond['cases']['4']}", ""
+    case = str(cond["state_case"][state])
+    intro = (cond["intro_with_state"].replace("[STATE]", state)
+             .replace("[CASE]", cond["case_label"][case]))
+    return f"{intro}\n\n{cond['cases'][case]}", state
 
 
-def build(personas: pd.DataFrame, prose: dict[str, str], materials: dict,
-          style: str, items: list[str]) -> pd.DataFrame:
-    """One row for each (respondent, item)."""
+def build(personas: pd.DataFrame, prose: dict[tuple[str, int], str],
+          materials: dict, style: str, items: list[str],
+          states: pd.DataFrame, seed: int) -> pd.DataFrame:
+    """One row for each (respondent, replicate, item).
+
+    A respondent normally has ONE bio, which is the Tier-1 regime. When the
+    stage-2 file holds more, each is asked the whole questionnaire, and the
+    analysis decides whether to average them. A template persona has no
+    replicate: the text is deterministic, so a second copy would be identical.
+    """
     scales = {i: ap.scale_of(i, materials["items"][i]["options"])
               for i in items}
+    reps = sorted({r for _, r in prose}) if prose else [0]
     rows = []
     for row in personas.itertuples():
-        if style == "template":
-            persona = ap.template_persona(row)
-        else:
-            persona = prose.get(row.profile_id)
-            if persona is None:
-                raise SystemExit(
-                    f"no stage-2 text for {row.profile_id}. Run stage 2, or "
-                    f"use --persona-style template.")
-        text = stimulus_for(row, materials)
-        for item in items:
-            rows.append({
-                "profile_id": row.profile_id, "condition": row.condition,
-                "item": item, "target": materials["items"][item]["target"],
-                "prompt": ap.build_prompt(persona, text,
-                                          materials["items"][item]["question"],
-                                          scales[item]),
-            })
+        text, state = stimulus_for(row, materials, states, seed)
+        for rep in ([0] if style == "template" else reps):
+            if style == "template":
+                persona = ap.template_persona(row)
+            else:
+                persona = prose.get((row.profile_id, rep))
+                if persona is None:
+                    raise SystemExit(
+                        f"no stage-2 text for {row.profile_id} replicate "
+                        f"{rep}. Run stage 2, or use --persona-style "
+                        f"template.")
+            for item in items:
+                rows.append({
+                    "profile_id": row.profile_id, "replicate": rep,
+                    "condition": row.condition, "state": state, "item": item,
+                    "target": materials["items"][item]["target"],
+                    "prompt": ap.build_prompt(
+                        persona, text, materials["items"][item]["question"],
+                        scales[item]),
+                })
     return pd.DataFrame(rows)
 
 
@@ -133,15 +193,21 @@ def main() -> None:
     ap_.add_argument("--persona-file",
                      help="read prose personas from here instead of "
                           "sim/out/02_persona_text.csv")
+    ap_.add_argument("--materials",
+                     help="read a different materials file, e.g. a validation "
+                          "study built by sim/validation/")
+    ap_.add_argument("--personas",
+                     help="read a different persona table")
     ap_.add_argument("--tag", help="name the output files")
     ap_.add_argument("--seed", type=int, default=SEED)
-    ap_.add_argument("--retry-rounds", type=int, default=3,
+    ap_.add_argument("--retry-rounds", type=int, default=5,
                      help="re-ask cells that did not parse (default 3)")
     ap_.add_argument("--max-model-len", type=int, default=4096)
     args = ap_.parse_args()
 
-    materials = json.loads((OUT / "00_materials.json").read_text())
-    personas = pd.read_csv(OUT / "01_personas.csv")
+    materials = json.loads(Path(
+        args.materials or OUT / "00_materials.json").read_text())
+    personas = pd.read_csv(args.personas or OUT / "01_personas.csv")
     if args.conditions:
         personas = personas[personas.condition.isin(args.conditions)]
     if args.limit:
@@ -150,7 +216,7 @@ def main() -> None:
     if personas.empty:
         raise SystemExit("no respondents selected")
 
-    prose: dict[str, str] = {}
+    prose: dict = {}
     if args.persona_style == "prose":
         path = Path(args.persona_file) if args.persona_file \
             else OUT / "02_persona_text.csv"
@@ -158,10 +224,32 @@ def main() -> None:
             raise SystemExit(f"missing {path}. Run stage 2, or use "
                              f"--persona-style template.")
         text = pd.read_csv(path)
-        prose = dict(zip(text.profile_id, text.text))
+        if "replicate" not in text.columns:
+            text["replicate"] = 0
+        prose = {(pid, int(rep)): t for pid, rep, t
+                 in zip(text.profile_id, text.replicate, text.text)}
 
-    items = args.items or spec.ALL_ITEMS
-    grid = build(personas, prose, materials, args.persona_style, items)
+    # The item list comes from the MATERIALS, not from the megastudy schema.
+    # A validation study such as v15 carries its own items, and defaulting to
+    # spec.ALL_ITEMS sent stage 3 looking for the megastudy's 44 inside
+    # Voelkel's 13.
+    items = args.items or list(materials["items"])
+    unknown = [i for i in items if i not in materials["items"]]
+    if unknown:
+        raise SystemExit(f"the materials hold no item(s): {unknown}")
+    # The state-adaptive arm needs the population weights. Read them only
+    # when that arm is in the run, so a validation study needs no such file.
+    states = pd.DataFrame(columns=["state", "region", "adults_18plus"])
+    if any(c.get("state_adaptive")
+           for k, c in materials["conditions"].items()
+           if k in set(personas.condition)):
+        if not STATE_POP.exists():
+            raise SystemExit(f"missing {STATE_POP}. Run "
+                             "sim/00b_state_populations.py.")
+        states = pd.read_csv(STATE_POP)
+
+    grid = build(personas, prose, materials, args.persona_style, items,
+                 states, args.seed)
     scales = {i: ap.scale_of(i, materials["items"][i]["options"])
               for i in items}
 
@@ -184,7 +272,8 @@ def main() -> None:
     params = [SamplingParams(temperature=TEMPERATURE, top_p=TOP_P,
                              max_tokens=MAX_TOKENS, stop=["'"], n=1,
                              seed=int(hashlib.blake2b(
-                                 f"{args.seed}:{r.profile_id}:{r.item}".encode(),
+                                 f"{args.seed}:{r.profile_id}:{r.replicate}:"
+                                 f"{r.item}".encode(),
                                  digest_size=4).hexdigest(), 16))
               for r in grid.itertuples()]
 
@@ -211,7 +300,7 @@ def main() -> None:
                            max_tokens=MAX_TOKENS, stop=["'"], n=1,
                            seed=int(hashlib.blake2b(
                                f"{args.seed}:{round_no}:{r.profile_id}:"
-                               f"{r.item}".encode(),
+                               f"{r.replicate}:{r.item}".encode(),
                                digest_size=4).hexdigest(), 16))
             for r in todo.itertuples()]
         again = engine.generate(list(todo.prompt), retry_params)
@@ -227,6 +316,48 @@ def main() -> None:
         rounds.append({"round": round_no, "attempted": len(todo),
                        "recovered": kept})
         print(f"retry {round_no}: {len(todo):,} attempted, {kept:,} recovered")
+
+    # **Fill whatever the retries could not recover.** `make check` FAILS on
+    # one NA in one prediction column, so a submission cannot ship a hole.
+    # v16 left 8 of 117,000 cells empty after three rounds, and the recovery
+    # rate is flat across rounds (91%, 89%, 88%), so more rounds alone do not
+    # reach zero. Each fill is DETERMINISTIC and is counted, because
+    # registration item G asks what post-processing the answers get.
+    #
+    # The order keeps as much of the person as possible:
+    #   1. the person's median on the other items of the same composite
+    #   2. the item's median over every other person
+    #   3. the middle of the scale
+    fills = {"person": 0, "item": 0, "midpoint": 0}
+    holes = grid.index[grid.value.isna()]
+    if len(holes):
+        of_composite = {i: c for c, block in
+                        materials.get("composites", {}).items()
+                        for i in block}
+        item_median = grid.groupby("item").value.median()
+        for ix in holes:
+            row = grid.loc[ix]
+            comp = of_composite.get(row.item)
+            val = float("nan")
+            if comp:
+                mates = grid[(grid.profile_id == row.profile_id)
+                             & (grid.replicate == row.replicate)
+                             & (grid.item.map(of_composite) == comp)]
+                val = mates.value.median()
+            if pd.notna(val):
+                fills["person"] += 1
+            elif pd.notna(item_median.get(row.item, float("nan"))):
+                val = item_median[row.item]
+                fills["item"] += 1
+            else:
+                sc = scales[row.item]
+                val = (sc["low"] + sc["high"]) / 2
+                fills["midpoint"] += 1
+            grid.loc[ix, "value"] = float(val)
+            grid.loc[ix, "raw"] = "[filled]"
+        print(f"filled {len(holes):,} cell(s): "
+              + ", ".join(f"{k} {v:,}" for k, v in fills.items() if v))
+
     elapsed = time.time() - clock
     ended = datetime.now(timezone.utc).isoformat()
 
@@ -234,7 +365,8 @@ def main() -> None:
     with (OUT / f"{tag}.jsonl").open("w") as f:
         for r in grid.itertuples():
             f.write(json.dumps({
-                "profile_id": r.profile_id, "condition": r.condition,
+                "profile_id": r.profile_id, "replicate": r.replicate,
+                "condition": r.condition, "state": r.state,
                 "item": r.item, "target": r.target,
                 "raw": r.raw, "value": r.value}) + "\n")
 
@@ -258,6 +390,9 @@ def main() -> None:
         (f"  !! {len(grid) - ok:,} CELLS STILL EMPTY — make check FAILS on an "
          f"NA in a prediction column" if ok < len(grid) else
          "  every cell has a value"),
+        (f"  filled        {sum(fills.values()):,} cell(s) not recovered by "
+         f"retries: " + ", ".join(f"{k} {v:,}" for k, v in fills.items() if v)
+         if sum(fills.values()) else "  filled         none needed"),
         f"wall clock     {elapsed / 60:.1f} min  "
         f"({len(grid) / elapsed:.1f} generations/s)", "",
         f"wrote sim/out/{tag}.jsonl", "", "=" * 74, ""])
