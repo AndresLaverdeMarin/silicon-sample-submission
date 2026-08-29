@@ -181,3 +181,28 @@ Record the code location in `metadata.json` → `code_repository`.
 
 `gss_profiles.csv` is 2.1 MB. GitHub does not show files above 1 MB in the web
 view. Read `quota_report.txt` (3 KB) instead to check the quotas.
+
+## `state_adult_pop_2024.csv` — the state weights for one arm
+
+`sim/00b_state_populations.py` writes this file. It holds 51 rows: the 50
+states, the District of Columbia, the Census region of each, and the number
+of people aged 18 and over in 2024.
+
+**Why it is here.** One arm, `Extreme weather predictions`, is state-adaptive.
+The participant reports a home state, and then reads one of four texts,
+chosen by the risk category of that state. Our personas carry a region, not a
+state. So stage 3 draws a state inside the person's own region, and weights
+the draw by these numbers. Without the weights, Wyoming would be as common as
+California.
+
+| field | value |
+|---|---|
+| Source | US Census Bureau, Population Estimates Program (PEP), vintage 2024 |
+| File | `https://www2.census.gov/programs-surveys/popest/datasets/2020-2024/state/asrh/sc-est2024-agesex-civ.csv` |
+| Downloaded | 2026-08-29 |
+| Selection | `SUMLEV` 040 (state), `SEX` 0 (both), `AGE` 18 to 85 |
+| Total | 265,926,503 adults |
+| Key | no API key; the public bulk-file server |
+
+This is the same programme and the same vintage as
+`census_quota_targets.json`, so the two agree.
