@@ -69,14 +69,23 @@ REPAIR_TEMPERATURE = 0.7
 REPAIR_TOP_P = 0.9
 
 
-def build(frame: pd.DataFrame, seed: int) -> pd.DataFrame:
-    """One prompt for each persona, with its voice and fact order."""
+def build(frame: pd.DataFrame, seed: int,
+          replicates: int = 1) -> pd.DataFrame:
+    """`replicates` prompts for each persona, each with its own voice.
+
+    One bio per person is the Tier-1 regime: a respondent is one row, and the
+    variation between people is the deliverable. More than one exists only to
+    test what averaging them does — see v16 in the sibling modelbench project.
+    Each replicate draws its own seed, so the voice and the fact order move.
+    """
     rows = []
     for row in frame.itertuples():
-        rng = random.Random(f"{seed}:{row.profile_id}")
-        prompt, voice, order = pp.build_prompt(row, rng)
-        rows.append({"profile_id": row.profile_id, "prompt": prompt,
-                     "voice": voice, "fact_order": "|".join(order)})
+        for rep in range(replicates):
+            rng = random.Random(f"{seed}:{row.profile_id}:{rep}")
+            prompt, voice, order = pp.build_prompt(row, rng)
+            rows.append({"profile_id": row.profile_id, "replicate": rep,
+                         "prompt": prompt, "voice": voice,
+                         "fact_order": "|".join(order)})
     return pd.DataFrame(rows)
 
 
@@ -112,7 +121,7 @@ def tidy(text: str) -> str:
 
 def score(frame: pd.DataFrame, personas: pd.DataFrame) -> pd.DataFrame:
     """Run the gates over every written text."""
-    by_id = personas.set_index("profile_id")
+    by_id = personas.drop_duplicates("profile_id").set_index("profile_id")
     checks = [pp.check(t, by_id.loc[i]) for i, t in
               zip(frame.profile_id, frame.text)]
     return pd.concat([frame.reset_index(drop=True),
@@ -163,16 +172,20 @@ def main() -> None:
     ap.add_argument("--writer", default=WRITER)
     ap.add_argument("--seed", type=int, default=SEED)
     ap.add_argument("--limit", type=int, help="smoke test on the first N")
+    ap.add_argument("--replicates", type=int, default=1,
+                    help="bios per person. 1 is the Tier-1 regime.")
+    ap.add_argument("--personas", help="read a different persona table")
+    ap.add_argument("--out", help="write to this CSV instead")
     ap.add_argument("--repair-rounds", type=int, default=2)
     ap.add_argument("--max-model-len", type=int, default=2048)
     args = ap.parse_args()
 
     if not PERSONAS.exists():
         raise SystemExit(f"missing {PERSONAS}. Run stage 1 first.")
-    personas = pd.read_csv(PERSONAS)
+    personas = pd.read_csv(args.personas or PERSONAS)
     if args.limit:
         personas = personas.head(args.limit).copy()
-    prompts = build(personas, args.seed)
+    prompts = build(personas, args.seed, args.replicates)
 
     from transformers import AutoTokenizer
     from vllm import LLM
@@ -194,7 +207,8 @@ def main() -> None:
         again = generate(engine, tokenizer, list(bad.prompt),
                          REPAIR_TEMPERATURE, REPAIR_TOP_P,
                          args.seed + round_no)
-        retry = score(bad[["profile_id", "prompt", "voice", "fact_order"]]
+        retry = score(bad[["profile_id", "replicate", "prompt", "voice",
+                           "fact_order"]]
                       .assign(text=[tidy(t) for t in again]), personas)
         # Keep a retry only when it fails FEWER gates than what it replaces.
         def failures(frame):
@@ -202,16 +216,24 @@ def main() -> None:
                     + (~frame.ascii_ok).astype(int)
                     + (~frame.length_ok).astype(int)).to_numpy()
         better = failures(retry) < failures(bad)
-        kept = retry[better].set_index("profile_id")
-        scored = scored.set_index("profile_id")
+        # **Index on (profile_id, replicate), never profile_id alone.** With
+        # more than one bio per person the id repeats, and assigning through a
+        # duplicated index makes pandas align every matching row against every
+        # other. On 9,000 rows that hangs, and where it does not hang it
+        # writes one replicate's text over all five.
+        key = ["profile_id", "replicate"]
+        kept = retry[better].set_index(key)
+        scored = scored.set_index(key)
         scored.loc[kept.index, kept.columns] = kept
         scored = scored.reset_index()
         repairs.append({"round": round_no, "attempted": int(len(bad)),
                         "kept": int(better.sum())})
     ended = datetime.now(timezone.utc).isoformat()
 
-    stem = "02_persona_text_smoke" if args.limit else "02_persona_text"
-    keep = ["profile_id", "text", "voice", "fact_order", "n_facts",
+    stem = (args.out[:-4] if args.out and args.out.endswith(".csv")
+            else "02_persona_text_smoke" if args.limit else "02_persona_text")
+    keep = ["profile_id", "replicate", "text", "voice", "fact_order",
+            "n_facts",
             "n_checkable", "n_missing", "missing", "leaks", "n_words", "ok"]
     scored[keep].to_csv(OUT / f"{stem}.csv", index=False)
     text = report(scored, repairs, args, (started, ended))
