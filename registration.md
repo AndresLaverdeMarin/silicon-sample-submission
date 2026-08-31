@@ -14,17 +14,18 @@ sections (B) once per model. See the call's *Disclosure policy* for escrow rules
 > was deleted. That form is in git history at commit `aa4e060`. Nothing from it is carried into the
 > answers deposited here.
 
-> **This form covers the `primary` entry.** It is one of two entries from `team_27`. The
-> `secondary-1` entry uses the same population, the same stimuli, the same model and the same
+> **This form covers the `secondary-1` entry.** It is one of two entries from `team_27`. The
+> `primary` entry uses the same population, the same stimuli, the same model and the same
 > hardware, and asks each multi-item scale as one block instead of one item for each call. That is
 > the only factor that differs, and the pair is designed to bracket the human coherence value from
 > below and above. See E.2 and J.1. Its repository:
-> <https://github.com/AndresLaverdeMarin/silicon-sample-submission-secondary-1>.
+> <https://github.com/AndresLaverdeMarin/silicon-sample-submission-secondary-1>. The repository name holds the word `secondary-1` because it was made before the labels
+> were set on 2026-08-31. The name is not the label; see J.1.
 
 > **Every fact the run produces is filled in**, from `sim/out/03_report.txt` and the run log. Two
-> items are still `PENDING`, and both need a person, not a run: the competing-interests declaration
-> (I.1) and the blinding attestation (I.3). Both must be signed by the members named in 0.1 before
-> the deposit.
+> items are complete. Andres Laverde Marin signs the competing-interests declaration (I.1) and
+> the blinding attestation (I.3) for `team_27`, and sends the benchmark's own exposure declaration
+> with the deposit email.
 
 ---
 
@@ -32,10 +33,10 @@ sections (B) once per model. See the call's *Disclosure policy* for escrow rules
 - **0.1 Team ★** — name, the one or two members (teams are at most two, unless a larger team was approved on request), affiliations, corresponding contact:
   Team `team_27`, two members.
   Andres Laverde Marin, Joint Research Centre, European Commission, ORCID
-  [0000-0002-9578-4412](https://orcid.org/0000-0002-9578-4412). Corresponding contact:
-  andreslaverdemarin@gmail.com.
+  [0000-0002-9578-4412](https://orcid.org/0000-0002-9578-4412), andres.laverde-marin@ec.europa.eu.
+  **Corresponding contact, and the member who deposits and signs for the team.**
   Giordano De Marzo, University of Konstanz, ORCID
-  [0000-0002-3127-5336](https://orcid.org/0000-0002-3127-5336).
+  [0000-0002-3127-5336](https://orcid.org/0000-0002-3127-5336), giordano.de-marzo@uni-konstanz.de.
   The same values are in `metadata.json` (`team_name`, `contact`, `creators`). Both ORCIDs pass the
   ISO 7064 MOD-11-2 checksum.
 - **0.2 Plain-language summary ★** — one paragraph, what the approach does (not how):
@@ -66,7 +67,7 @@ sections (B) once per model. See the call's *Disclosure policy* for escrow rules
   6. `sim/04_build_raw_export.py` — one row for each respondent, 44 raw item columns, into
      `raw_data_deposit/`.
   7. `make clean` — the benchmark's own `scripts/clean.R` builds every composite and writes
-     `predictions/team_27_T1_primary_v1.csv`.
+     `predictions/team_27_T1_secondary-1_v1.csv`.
   8. `make manifest` then `make check` — SHA-256 into `metadata.json`, then the organizers' validator.
   **Stage 2 (`sim/02_write_personas.py`) is NOT in this pipeline.** It writes prose personas with a
   second model. It was measured and dropped; see D.2.
@@ -163,7 +164,13 @@ sections (B) once per model. See the call's *Disclosure policy* for escrow rules
   six answered any item of this megastudy, and none contributed a submitted value.** This comparison
   ran in a separate working project, `modelbench`, which is **not part of this deposit** — see K.1.
   What is deposited is its conclusion: the choice of model 1. The ranking and the rest of the search
-  are described in J.1.
+  are described in J.1. **Where these names appear in the deposited code.**
+  `sim/03_generate_replies.py` holds a vLLM engine-settings table that names
+  `google/gemma-4-26B-A4B-it`, `google/gemma-4-E4B-it` and `google/gemma-3-27b-it`, and
+  `sim/02_write_personas.py` names `google/gemma-4-26B-A4B-it` as the stage-2 persona writer. Both
+  are configuration only. Stage 2 is not in the submitted pipeline (D.2), and **only
+  `Qwen/Qwen3.8-27B` answered a submitted item**. The files are kept as they ran, because K.1
+  claims the deposited code rebuilds every prompt byte for byte.
 
 ## C · Prompts
 - **C.1 Exact prompts** — verbatim text or link to deposited file; were they iteratively refined? pre-specified vs in response to outputs:
@@ -296,6 +303,9 @@ sections (B) once per model. See the call's *Disclosure policy* for escrow rules
   **None.** No scaling, no shifting, no debiasing, no clamping, no rounding, no reweighting. The
   submitted values are the parsed generations, and the composites are the benchmark's own arithmetic
   over them. No human outcome data, from this study or any other, was used to adjust any value.
+  This item is about the adjustment of values. Human data from the public Voelkel study did
+  select design settings, among them the persona rendering and the number of draws for each
+  answer. See D.2, B.7 and J.1.
 
 ## H · Learning and conditioning components
 - **H.1 Fine-tuning data** — exact corpus (hashes/DOIs), hyperparameters, checkpoints:
@@ -307,13 +317,19 @@ sections (B) once per model. See the call's *Disclosure policy* for escrow rules
 
 ## I · Data inputs, blinding, and competing interests
 - **I.1 Competing interests ★** — funding, in-kind compute/model access, relationships with LLM-interested entities:
-  `PENDING (team declaration)` — to be completed and signed by the members named in 0.1. Facts known
-  to the pipeline: the answering model is open weights, downloaded publicly and run on the team's own
-  hardware; no compute, credits or model access were granted by any model provider for this
-  benchmark; the one hosted model used for validation, `qwen/qwen3.8-flash` through OpenRouter
-  (J.1, K.3), was paid for out of pocket at a cost below one United States dollar. Institutional affiliations are the Joint Research Centre of
-  the European Commission and the University of Konstanz. Any funding source and any relationship
-  with an entity with an interest in language-model performance must be listed here by the team.
+  **Declared by the team. There are no competing interests.** No funding was received for this
+  entry. No compute, credits, model access or other in-kind support was given by any language-model
+  provider, or by any other entity with an interest in language-model performance. The answering
+  model, `Qwen/Qwen3.8-27B`, is open weights. The team downloaded it publicly and ran it on its own
+  hardware. The one hosted model used for validation, `qwen/qwen3.8-flash` through OpenRouter
+  (J.1, K.3), was paid for out of pocket at a cost below one United States dollar, and it
+  contributed no submitted value. The two members are employed by the Joint Research Centre of the
+  European Commission and by the University of Konstanz. Neither institution funded this entry, and
+  neither has a stake in the result. Neither member has a financial or advisory relationship with a
+  language-model provider. The benchmark's own exposure declaration carries the same statement. The
+  organizers ask for one such declaration for each team, signed by one member for everyone. Andres
+  Laverde Marin signs it for `team_27` and sends it with the deposit email to
+  janlukas.pfaender@gmail.com.
 - **I.2 External human data †** — all external human datasets that informed the approach anywhere (training/fine-tuning/retrieval/ICL/calibration):
   Four, and none of them contains any outcome of this study.
   1. **General Social Survey** (2018, 2021, 2022, 2024), used only to build the demographic profiles
@@ -327,7 +343,7 @@ sections (B) once per model. See the call's *Disclosure policy* for escrow rules
      Code Ocean capsule 9843791. It is our method reference and our scoring reference, in three
      distinct ways, none of which puts a number into a prediction:
      a. **Method.** The prompt structure and the one-item-per-call format come from that paper. This
-        entry keeps that format; our `secondary-1` entry departs from it for the 6 multi-item
+        entry keeps that format; our `primary` entry departs from it for the 6 multi-item
         outcomes.
      b. **Measured effects of other studies.** The capsule's archive holds the published arm effects
         and their standard errors for 4 megastudies (`voelkel2025`, `doell2024`, `zickfeld2025`,
@@ -340,12 +356,15 @@ sections (B) once per model. See the call's *Disclosure policy* for escrow rules
      **No value from the capsule enters any prediction**, and it holds no outcome of this study.
   No outcome data from this study, or from any pilot of it, informed any part of the pipeline.
 - **I.3 Blinding attestation ★** — **mandatory.** Signed attestation that no team member accessed, solicited, or was shown any human outcome data from this study, including pilots, before the prediction lock:
-  `PENDING (team signature)` — **this attestation must be signed by the members named in 0.1, with a
-  date. It is not signed here on the team's behalf.**
-  Prepared text, to be signed: *"We attest that no member of team_27 accessed, solicited, or was
-  shown any human outcome data from the target megastudy, including any pilot of it, at any time
-  before the prediction lock."*
-  Supporting facts for the signatories: the pipeline reads only the files listed in H.2, all of which
+  **Attested.** *"We attest that no member of team_27 accessed, solicited, or was shown any human
+  outcome data from the target megastudy, including any pilot of it, at any time before the
+  prediction lock."*
+  Signed for `team_27` by **Andres Laverde Marin** (andres.laverde-marin@ec.europa.eu),
+  **2026-08-31**. Giordano De Marzo (giordano.de-marzo@uni-konstanz.de) is the second member and is
+  covered by this attestation. The benchmark's own exposure declaration carries the same statement.
+  The organizers ask for one such declaration for each team, signed by one member for everyone.
+  Andres Laverde Marin signs it and sends it with the deposit email to janlukas.pfaender@gmail.com.
+  Supporting facts: the pipeline reads only the files listed in H.2, all of which
   are benchmark materials that contain no outcome data; no network request of any kind is made during
   generation, because the model is local; and `blinding_attestation` in `metadata.json` is `true`.
 - **I.4 Contamination note †** — training cutoff of every model vs public release dates of this project's materials; note any known exposure:
@@ -388,16 +407,32 @@ sections (B) once per model. See the call's *Disclosure policy* for escrow rules
   and returned a constant zero for `newsletter_signup`, which is a degenerate outcome. It was not
   adopted, and it contributed no submitted value.
   *Effect recovery was measured after the design was fixed, not used to choose it.* We ran this
-  entry's format and the `secondary-1` entry's format on Voelkel's 11 arms and scored them with the
+  entry's format and the `primary` entry's format on Voelkel's 11 arms and scored them with the
   Ashokkumar capsule's own R code (`metafor::rma.mv`). Mean over the 4 outcomes: this entry r_raw
-  0.449 / r_adj 0.476; `secondary-1` r_raw 0.504 / r_adj 0.537; GPT-4, as published by Ashokkumar et
+  0.449 / r_adj 0.476; `primary` r_raw 0.504 / r_adj 0.537; GPT-4, as published by Ashokkumar et
   al., 0.745 / 0.803. The two entries are the same within noise — with 10 arms a Pearson r has a 95
-  per cent interval of about [-0.46, +0.75]. **The measurement was made as a check, and it selected
-  nothing.**
+  per cent interval of about [-0.46, +0.75]. **The measurement selected no value in this file. It did select which entry the team
+  calls `primary`; see the next paragraph.**
+  *The `primary` label was set on 2026-08-31, after these measurements. We declare it as a
+  post-hoc order.* The two entries were both complete before any of these numbers were read. The
+  numbers changed no value in either prediction file. They changed only which entry the team calls
+  its best. `modelbench/random_baseline_entryAB.py` adds a permutation test on the same Voelkel
+  arms: shuffle our 10 arm labels 20,000 times, the same shuffle in all four outcomes, and score
+  again. Against the archive's published effects, the `primary` entry gives mean r +0.505, against a null 95th
+  percentile of +0.411 (p = 0.018); this entry gives +0.450 against +0.418 (p = 0.038). Against effects
+  recomputed from Voelkel's raw OSF file, neither entry clears its null (p = 0.068 and p = 0.140),
+  and the two human estimates agree with each other at only r = 0.80 to 0.90. The `primary` entry is also
+  nearer to the human respondents on level error (mean absolute error 5.11 against 11.45 scale
+  points) and on distribution shape (density overlap 0.72 against 0.63, mean absolute correlation
+  between outcomes 0.605 against 0.238, where real people give 0.651). With 10 arms the gap between
+  the two entries is not significant, so the order is a judgement on consistent direction and not a
+  test result. No outcome data of the target study was used, because none exists.
   *What we did not fix.* The item-mode format leaves our respondents internally noisier than real
-  ones (E.2). We disclose the measurement rather than tune it away after seeing it. Our `secondary-1`
+  ones (E.2). We disclose the measurement rather than tune it away after seeing it. Our `primary`
   entry is the same pipeline with that one factor changed, so the pair brackets the human value
-  rather than guessing at it.
+  rather than guessing at it. **The bracket applies to the 6 multi-item outcomes only.** The 7
+  single-item outcomes are byte-identical in the two entries, because the `primary` entry reuses
+  them unchanged. On those 7 of the 13 scored outcomes the two entries submit the same values.
 - **J.2 Selection blinding †** — confirm no selection used outcome data from this study:
   Confirmed. No configuration, model, prompt, rendering or sampling setting was chosen using any
   outcome data from the target study, or from any pilot of it. Every selection above used either the
@@ -409,7 +444,7 @@ sections (B) once per model. See the call's *Disclosure policy* for escrow rules
   **Everything that produced a submitted value is in this repository, and this repository is the
   deposit**: `population/` (the profiles) and `sim/` (the Tier-1 pipeline), with `sim/README.md` as
   the runbook. Running `population/` then `sim/` steps 00 to 04 rebuilds
-  `predictions/team_27_T1_primary_v1.csv` from the deposited inputs, with no other repository
+  `predictions/team_27_T1_secondary-1_v1.csv` from the deposited inputs, with no other repository
   needed.
   **What is deliberately NOT in this deposit.** The measurements that CHOSE the design — the model
   comparison in B (models 3 to 8) and the v15 to v21 format search in J.1 — ran in a separate
