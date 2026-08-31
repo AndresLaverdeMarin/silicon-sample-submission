@@ -21,7 +21,7 @@ Then the benchmark's own tooling. These are **R**, not Python, so they do not
 go through `uv`:
 
 ```bash
-make clean      # raw export -> predictions/<team_id>_T1_secondary-1_v1.csv
+make clean      # raw export -> predictions/<team_id>_T1_primary_v1.csv
 make check      # validate. Wants PASS or PASS WITH WARNINGS, never FAIL.
 make manifest   # SHA-256 into metadata.json
 ```
